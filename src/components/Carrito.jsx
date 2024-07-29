@@ -1,9 +1,13 @@
-import React from 'react';
-import CantidadControl from './CantidadControl'; // Asegúrate de importar el componente CantidadControl
+import React, { useEffect, useState } from 'react';
+import CantidadControl from './CantidadControl';
 import supabase from '../supabase/supabase.config';
 
-const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, decrementarCantidad, user }) => {
-    const productosEnCarrito = productos.filter(producto => producto.cantidad > 0);
+const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, decrementarCantidad, user, resetCantidades }) => {
+    const [productosEnCarrito, setProductosEnCarrito] = useState(productos.filter(producto => producto.cantidad > 0));
+
+    useEffect(() => {
+        setProductosEnCarrito(productos.filter(producto => producto.cantidad > 0));
+    }, [productos]);
 
     const totalCompra = productosEnCarrito.reduce((total, producto) => {
         return total + producto.precio * producto.cantidad;
@@ -53,6 +57,8 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
             }
 
             alert('Pedido realizado con éxito!');
+            // Limpiar el carrito después de realizar el pedido
+            resetCantidades();
         } catch (error) {
             console.error('Error al realizar el pedido:', error.message);
         }

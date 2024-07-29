@@ -41,29 +41,29 @@ const Header = ({ user, onSelectLocation }) => {
             <Navbar bg="light" expand="lg">
                 <Navbar.Brand href="#home">Mi App</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        {userLocations.length > 0 && (
-                            <Dropdown>
-                                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                    {userLocations[0].address}
-                                </Dropdown.Toggle>
+                {user ? (
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                            {userLocations.length > 0 && (
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                        {userLocations[0].address}
+                                    </Dropdown.Toggle>
 
-                                <Dropdown.Menu>
-                                    {userLocations.map((location, index) => (
-                                        <Dropdown.Item key={index} onClick={() => onSelectLocation(location)}>
-                                            {location.address}
+                                    <Dropdown.Menu>
+                                        {userLocations.map((location, index) => (
+                                            <Dropdown.Item key={index} onClick={() => onSelectLocation(location)}>
+                                                {location.address}
+                                            </Dropdown.Item>
+                                        ))}
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item onClick={() => setShowLocationForm(true)}>
+                                            Agregar nueva dirección
                                         </Dropdown.Item>
-                                    ))}
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item onClick={() => setShowLocationForm(true)}>
-                                        Agregar nueva dirección
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        )}
-                    </Nav>
-                    {user ? (
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            )}
+                        </Nav>
                         <>
                             <Dropdown alignRight>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -74,12 +74,13 @@ const Header = ({ user, onSelectLocation }) => {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </>
-                    ) : (
-                        <Button variant="outline-success" onClick={signInWithGoogle}>
-                            Iniciar sesión con Google
-                        </Button>
-                    )}
-                </Navbar.Collapse>
+                    </Navbar.Collapse>
+                ) : (
+                    <Button variant="outline-success" onClick={signInWithGoogle}>
+                        Iniciar sesión con Google
+                    </Button>
+                )}
+
             </Navbar>
 
             <UserLocationForm

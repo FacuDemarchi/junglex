@@ -10,8 +10,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Comprobar si el usuario está autenticado al cargar la aplicación
-    const session = supabase.auth.getSession;
-    setUser(session?.user || null);
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+
+    fetchSession();
 
     // Suscribirse a los cambios en la autenticación
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -41,6 +45,20 @@ export const AuthProvider = ({ children }) => {
         if (error) throw error;
       } catch (error) {
         console.error('Error signing out:', error.message);
+      }
+    },
+    registerAsComercio: async () => {
+      if (!user) return;
+  
+      try {
+        const { error } = await supabase
+          .from('user_profiles')
+          .upsert({ user_id: user.id, user_type: 'comercio' });
+  
+        if (error) throw error;
+        console.log('Usuario registrado como comercio');
+      } catch (error) {
+        console.error('Error registering as comercio:', error.message);
       }
     },
   };
