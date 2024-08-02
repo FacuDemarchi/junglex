@@ -11,7 +11,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Comprobar si el usuario está autenticado al cargar la aplicación
     const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error fetching session:', error.message);
+        return;
+      }
+      console.log('Session fetched:', session);
       setUser(session?.user || null);
     };
 
@@ -19,6 +24,7 @@ export const AuthProvider = ({ children }) => {
 
     // Suscribirse a los cambios en la autenticación
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', session);
       setUser(session?.user || null);
     });
 
@@ -31,10 +37,14 @@ export const AuthProvider = ({ children }) => {
     user,
     signInWithGoogle: async () => {
       try {
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
         });
-        if (error) throw error;
+        if (error) {
+          console.error('Error logging in with Google:', error.message);
+          return;
+        }
+        console.log('User signed in:', data.user);
       } catch (error) {
         console.error('Error logging in with Google:', error.message);
       }
@@ -42,23 +52,11 @@ export const AuthProvider = ({ children }) => {
     signOut: async () => {
       try {
         const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        if (error) {
+          console.error('Error signing out:', error.message);
+        }
       } catch (error) {
         console.error('Error signing out:', error.message);
-      }
-    },
-    registerAsComercio: async () => {
-      if (!user) return;
-  
-      try {
-        const { error } = await supabase
-          .from('user_profiles')
-          .upsert({ user_id: user.id, user_type: 'comercio' });
-  
-        if (error) throw error;
-        console.log('Usuario registrado como comercio');
-      } catch (error) {
-        console.error('Error registering as comercio:', error.message);
       }
     },
   };
