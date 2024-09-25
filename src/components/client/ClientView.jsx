@@ -10,7 +10,7 @@ import ComercioForm from './ComercioForm';
 import supabase from '../../supabase/supabase.config';
 import HeaderClient from './HeaderClient';
 
-const VistaCliente = ({ user, userComercio }) => {
+const ClientView = ({ user, userComercio }) => {
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -37,6 +37,8 @@ const VistaCliente = ({ user, userComercio }) => {
             // Obtener categorías
             const categoriasData = [...new Set(comerciosData.map(comercio => comercio.categoria))];
             setCategorias(categoriasData);
+
+            
         }
 
         fetchData();
@@ -149,4 +151,4 @@ const VistaCliente = ({ user, userComercio }) => {
     );
 };
 
-export default VistaCliente;
+export default ClientView;

@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { GoogleMap, Marker, InfoWindow, LoadScript } from '@react-google-maps/api';
 
 const containerStyle = {
-  width: '100%',
-  height: '400px'
+    width: '100%',
+    height: '400px'
 };
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
-const UserLocationForm = ({ userId, show, handleClose, handleSave }) => {
+const UserLocationForm = ({ user, show, handleClose, handleSave, showPhoneNumber }) => {
     const [address, setAddress] = useState('');
     const [position, setPosition] = useState(null);
+    const [phone, setPhone] = useState('');
+
+    useEffect(() => {
+        setPhone(user.phone || '');
+    }, [user]);
 
     const handleMapClick = (e) => {
         setPosition(e.latLng.toJSON());
@@ -21,10 +26,13 @@ const UserLocationForm = ({ userId, show, handleClose, handleSave }) => {
         setAddress(e.target.value);
     };
 
+    const handlePhoneChange = (e) => {
+        setPhone(e.target.value);
+    };
+
     const handleSubmit = async () => {
         try {
-            // Aquí iría tu lógica para guardar la ubicación en la base de datos
-            handleSave(address, position);
+            handleSave(address, position, showPhoneNumber ? phone : null);
             handleClose();
         } catch (error) {
             console.error('Error al guardar la ubicación:', error);
@@ -37,6 +45,18 @@ const UserLocationForm = ({ userId, show, handleClose, handleSave }) => {
                 <Modal.Title>Registro de Ubicación</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {showPhoneNumber && (
+                    <Form.Group controlId="formPhone">
+                        <Form.Label>Número de Teléfono</Form.Label>
+                        <Form.Control
+                            type="tel"
+                            placeholder="Ingresa tu número de teléfono"
+                            value={phone}
+                            onChange={handlePhoneChange}
+                        />
+                    </Form.Group>
+                )}
+
                 <Form.Group controlId="formAddress">
                     <Form.Label>Dirección</Form.Label>
                     <Form.Control
@@ -46,6 +66,7 @@ const UserLocationForm = ({ userId, show, handleClose, handleSave }) => {
                         onChange={handleAddressChange}
                     />
                 </Form.Group>
+
                 <LoadScript googleMapsApiKey={apiKey}>
                     <GoogleMap
                         mapContainerStyle={containerStyle}

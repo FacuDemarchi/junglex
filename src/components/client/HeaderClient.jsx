@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navbar, Nav, Button, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Dropdown } from 'react-bootstrap';
 import UserLocationForm from './UserLocationForm';
 import supabase from '../../supabase/supabase.config';
 import { BsPersonFill } from "react-icons/bs";
@@ -11,42 +11,60 @@ const HeaderClient = ({ user, onSelectLocation }) => {
     const { signOut } = useAuth();
 
     useEffect(() => {
-        async function fetchUserLocations() {
+        async function fetchUserData() {
             if (user) {
-                console.log('Fetching user locations for user:', user);
-                const { data: locationsData, error } = await supabase
+                console.log(user.phone)
+                // Verificar si el número de teléfono está presente
+                // setIsPhoneNumberMissing(!userData?.phone);
+
+                // Obtener ubicaciones del usuario
+                const { data: locationsData, error: locationsError } = await supabase
                     .from('user_locations')
                     .select()
                     .eq('user_id', user.id);
 
-                if (error) {
-                    console.error('Error fetching user locations:', error.message);
+                if (locationsError) {
+                    console.error('Error fetching user locations:', locationsError.message);
                 }
 
                 if (locationsData && locationsData.length > 0) {
                     setUserLocations(locationsData);
-                    onSelectLocation(locationsData[0]); // Pasar la primera ubicación seleccionada por defecto
+                    onSelectLocation(locationsData[0]);
                 } else {
                     setShowLocationForm(true);
                 }
             }
         }
 
-        fetchUserLocations();
+        fetchUserData();
     }, [user, onSelectLocation]);
 
-    const handleSaveLocation = async (address, position) => {
+    const handleSaveLocation = async (address, position, phone) => {
         const newLocation = { address, latitude: position.lat, longitude: position.lng, user_id: user.id };
-        const { error } = await supabase
+        
+        // Guardar nueva ubicación
+        const { error: locationError } = await supabase
             .from('user_locations')
             .insert([newLocation]);
 
-        if (error) {
-            console.error('Error saving new location:', error.message);
+        if (locationError) {
+            console.error('Error saving new location:', locationError.message);
         } else {
             setUserLocations([...userLocations, newLocation]);
-            onSelectLocation(newLocation); // Seleccionar la nueva ubicación guardada
+            onSelectLocation(newLocation);
             setShowLocationForm(false);
+        }
+
+        // Si se proporcionó un número de teléfono, actualizar en auth.users
+        if (phone) {
+            const { error: phoneError } = await supabase
+                .from('auth.users')
+                .update({ phone })
+                .eq('id', user.id);
+
+            if (phoneError) {
+                console.error('Error updating phone number:', phoneError.message);
+            }
         }
     };
 
@@ -62,7 +80,6 @@ const HeaderClient = ({ user, onSelectLocation }) => {
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                                     {userLocations[0].address}
                                 </Dropdown.Toggle>
-
                                 <Dropdown.Menu>
                                     {userLocations.map((location, index) => (
                                         <Dropdown.Item key={index} onClick={() => onSelectLocation(location)}>
@@ -90,7 +107,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
             </Navbar>
 
             <UserLocationForm
-                userId={user?.id}
+                user={user}
                 show={showLocationForm}
                 handleClose={() => setShowLocationForm(false)}
                 handleSave={handleSaveLocation}

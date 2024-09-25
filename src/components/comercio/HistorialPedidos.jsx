@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Table } from 'react-bootstrap';
 import supabase from '../../supabase/supabase.config';
 
 const HistorialPedidos = ({ user }) => {
@@ -9,9 +10,9 @@ const HistorialPedidos = ({ user }) => {
             async function buscarHistorialPedidos() {
                 const { data, error } = await supabase
                     .from('pedidos')
-                    .select()
+                    .select('id, descripcion, estado, usuario_id, direccion_destino')
                     .eq('comercio_id', user.id)
-                    .in('estado', ['enviado', 'entregado', 'cancelado']); // Filtra pedidos por estado
+                    .in('estado', ['enviado', 'entregado', 'cancelado']);
 
                 if (error) {
                     console.error('Error al intentar traer el historial de pedidos del usuario:', error);
@@ -25,12 +26,29 @@ const HistorialPedidos = ({ user }) => {
 
     return (
         <div>
-            <p>Historial de pedidos en estado enviado, entregado o cancelado</p>
-            <ul>
-                {historialPedidos.map((pedido) => (
-                    <li key={pedido.id}>{pedido.descripcion}</li> // Ajusta el campo de descripción según la estructura de tus datos
-                ))}
-            </ul>
+            <h3>Historial de Pedidos</h3>
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                        <th>Usuario</th>
+                        <th>Dirección de Destino</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {historialPedidos.map((pedido) => (
+                        <tr key={pedido.id}>
+                            <td>{pedido.id}</td>
+                            <td>{pedido.descripcion}</td>
+                            <td>{pedido.usuario_id}</td>
+                            <td>{pedido.direccion_destino}</td>
+                            <td>{pedido.estado}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </div>
     );
 };

@@ -38,13 +38,29 @@ const ConfigComercio = ({ user }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { error } = await supabase
+
+        // Actualizar los datos del comercio
+        const { error: comercioError } = await supabase
             .from('comercios')
-            .update(comercioData)
+            .update({
+                nombre: comercioData.nombre,
+                direccion: comercioData.direccion
+            })
             .eq('id', user.id);
 
-        if (error) {
-            console.error('Error al actualizar los datos del comercio:', error);
+        if (comercioError) {
+            console.error('Error al actualizar los datos del comercio:', comercioError);
+        }
+
+        // Actualizar el teléfono en la tabla user usando la función de Supabase
+        const { error: phoneError } = await supabase
+            .rpc('add_phone_to_user', {
+                user_id: user.id,
+                phone: comercioData.telefono
+            });
+
+        if (phoneError) {
+            console.error('Error al actualizar el teléfono del usuario:', phoneError);
         } else {
             alert('Datos actualizados exitosamente');
         }

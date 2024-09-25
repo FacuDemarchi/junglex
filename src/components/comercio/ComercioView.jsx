@@ -7,8 +7,8 @@ import ConfigComercio from './ConfigComercio';
 import ClientView from '../client/ClientView';
 
 const ComercioView = ({ user }) => {
-    const [currentView, setCurrentView] = useState('Pedidos'); // Default page
-
+    const [currentView, setCurrentView] = useState('Pedidos');
+    
     const handleViewChange = (view) => {
         setCurrentView(view);
     };
