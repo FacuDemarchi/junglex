@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Button, Dropdown } from 'react-bootstrap';
-import { useAuth } from '../context/AuthContext';
-import UserLocationForm from './client/UserLocationForm';
-import supabase from '../supabase/supabase.config';
+import { useAuth } from '../../context/AuthContext';
+import UserLocationForm from '../client/UserLocationForm';
+import supabase from '../../supabase/supabase.config';
 import { BsPersonFill } from "react-icons/bs";
 
 const Header = ({ user, onSelectLocation, userComercio }) => {

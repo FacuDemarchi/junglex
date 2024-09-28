@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import supabase from './supabase/supabase.config';
-import { Button } from 'react-bootstrap';
 import ComercioView from './components/comercio/ComercioView';
 import ClientView from './components/client/ClientView';
+import UnknownUser from './components/noLogedIn/UnknownUser'
 
 const App = () => {
     const { user, signInWithGoogle } = useAuth();
@@ -37,13 +37,7 @@ const App = () => {
                     <ClientView user={user}/>
                 )
             ) : (
-                <div className="container mt-5">
-                    <Button variant="outline-success" className="ml-3" onClick={signInWithGoogle}>
-                        Iniciar sesión con Google
-                    </Button>
-                    <p>Inicie sesión para encontrar a los comercios que llegan hasta su ubicación!</p>
-                    <p>Esta sección es para mostrar información del proyecto, sus objetivos e incentivar el registro de todos los comercios a la plataforma</p>
-                </div>
+                <UnknownUser signInWithGoogle={signInWithGoogle}/>
             )}
         </>
     );
