@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import React from 'react';
+import Slider from 'react-slick';
 import { Button } from 'react-bootstrap';
 
 import AboutUs from './AboutUs';
 import Updates from './Updates';
 import Tutorials from './Tutorials';
-import NewFeature from './NewFeature'; // Ya tienes estos componentes
 
 const UnknownUser = ({ signInWithGoogle }) => {
-    const [selectedSlide, setSelectedSlide] = useState(0); // Estado para manejar el índice del carrusel
-
-    // Maneja el cambio de slide
-    const handleSlideChange = (index) => {
-        setSelectedSlide(index);
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: false
     };
 
     return (
@@ -21,13 +21,7 @@ const UnknownUser = ({ signInWithGoogle }) => {
             <Button variant="outline-success" className="ml-3" onClick={signInWithGoogle}>
                 Iniciar sesión con Google
             </Button>
-            <Carousel
-                onChange={handleSlideChange}
-                showThumbs={false}
-                showArrows={true}
-                infiniteLoop={true}
-                autoPlay={false}
-            >
+            <Slider {...settings}>
                 <div>
                     <AboutUs />
                 </div>
@@ -38,9 +32,9 @@ const UnknownUser = ({ signInWithGoogle }) => {
                     <Tutorials />
                 </div>
                 <div>
-                    <NewFeature />
+                    {/* <NextFeatures /> */}
                 </div>
-            </Carousel>
+            </Slider>
         </div>
     );
 };
