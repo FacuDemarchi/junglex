@@ -9,7 +9,7 @@ const HeaderComercio = ({ user, onViewChange }) => {
     const { signOut } = useAuth();
     const [showLocationForm, setShowLocationForm] = useState(false);
     
-    const handleSaveLocation = async (address, position, phone) => {
+    const handleSaveLocation = async (address, position) => {
         const newLocation = { address, latitude: position.lat, longitude: position.lng, user_id: user.id };
         
         // Guardar nueva ubicación
@@ -21,18 +21,6 @@ const HeaderComercio = ({ user, onViewChange }) => {
             console.error('Error saving new location:', locationError.message);
         } else {
             setShowLocationForm(false);
-        }
-
-        // Si se proporcionó un número de teléfono, actualizar en auth.users
-        if (phone) {
-            const { error: phoneError } = await supabase
-                .from('user_data')
-                .update({ phone })
-                .eq('id', user.id);
-
-            if (phoneError) {
-                console.error('Error updating phone number:', phoneError.message);
-            }
         }
     };
 

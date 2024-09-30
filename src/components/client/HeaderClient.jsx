@@ -13,10 +13,6 @@ const HeaderClient = ({ user, onSelectLocation }) => {
     useEffect(() => {
         async function fetchUserData() {
             if (user) {
-                console.log(user.phone)
-                // Verificar si el número de teléfono está presente
-                // setIsPhoneNumberMissing(!userData?.phone);
-
                 // Obtener ubicaciones del usuario
                 const { data: locationsData, error: locationsError } = await supabase
                     .from('user_locations')
@@ -39,7 +35,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
         fetchUserData();
     }, [user, onSelectLocation]);
 
-    const handleSaveLocation = async (address, position, phone) => {
+    const handleSaveLocation = async (address, position) => {
         const newLocation = { address, latitude: position.lat, longitude: position.lng, user_id: user.id };
         
         // Guardar nueva ubicación
@@ -53,18 +49,6 @@ const HeaderClient = ({ user, onSelectLocation }) => {
             setUserLocations([...userLocations, newLocation]);
             onSelectLocation(newLocation);
             setShowLocationForm(false);
-        }
-
-        // Si se proporcionó un número de teléfono, actualizar en auth.users
-        if (phone) {
-            const { error: phoneError } = await supabase
-                .from('auth.users')
-                .update({ phone })
-                .eq('id', user.id);
-
-            if (phoneError) {
-                console.error('Error updating phone number:', phoneError.message);
-            }
         }
     };
 

@@ -5,8 +5,7 @@ import supabase from '../../supabase/supabase.config';
 const ConfigComercio = ({ user }) => {
     const [comercioData, setComercioData] = useState({
         nombre: '',
-        direccion: '',
-        telefono: ''
+        direccion: ''
     });
 
     useEffect(() => {
@@ -50,17 +49,6 @@ const ConfigComercio = ({ user }) => {
 
         if (comercioError) {
             console.error('Error al actualizar los datos del comercio:', comercioError);
-        }
-
-        // Actualizar el teléfono en la tabla user usando la función de Supabase
-        const { error: phoneError } = await supabase
-            .rpc('add_phone_to_user', {
-                user_id: user.id,
-                phone: comercioData.telefono
-            });
-
-        if (phoneError) {
-            console.error('Error al actualizar el teléfono del usuario:', phoneError);
         } else {
             alert('Datos actualizados exitosamente');
         }
@@ -85,15 +73,6 @@ const ConfigComercio = ({ user }) => {
                         type="text"
                         name="direccion"
                         value={comercioData.direccion}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-                <Form.Group controlId="telefono">
-                    <Form.Label>Teléfono</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="telefono"
-                        value={comercioData.telefono}
                         onChange={handleChange}
                     />
                 </Form.Group>
