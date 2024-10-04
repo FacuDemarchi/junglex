@@ -35,9 +35,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
         fetchUserData();
     }, [user, onSelectLocation]);
 
-    const handleSaveLocation = async (address, position) => {
-        const newLocation = { address, latitude: position.lat, longitude: position.lng, user_id: user.id };
-        
+    const handleSaveLocation = async (newLocation) => {
         // Guardar nueva ubicación
         const { error: locationError } = await supabase
             .from('user_locations')

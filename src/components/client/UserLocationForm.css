@@ -1,0 +1,62 @@
+.floating-form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Asegúrate de que esté por encima del contenido */
+    width: 90%; /* Aumenta el ancho general */
+    max-width: 600px; /* Aumenta el tamaño máximo */
+    background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
+    border-radius: 12px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15); /* Sombra más prominente */
+    padding: 30px; /* Espacio interno mayor */
+  }
+  
+  .floating-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .input-address {
+    width: 100%;
+    padding: 12px; /* Más padding en el input */
+    margin-bottom: 15px; /* Espacio mayor entre el input y el mapa */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px; /* Texto más grande */
+  }
+  
+  .map-container {
+    width: 100%;
+    height: 300px; /* Aumenta la altura del mapa */
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between; /* Alinea los botones uno al lado del otro */
+    width: 100%; /* Asegúrate de que ocupen todo el ancho */
+  }
+  
+  .save-button, .cancel-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%; /* Ocupa el 48% del ancho para que haya un pequeño espacio entre los botones */
+    font-size: 16px; /* Texto de los botones más grande */
+  }
+  
+  .save-button {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #dc3545;
+    color: white;
+  }
+  

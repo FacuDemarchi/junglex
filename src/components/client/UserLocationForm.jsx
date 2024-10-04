@@ -1,76 +1,110 @@
-import React, { useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { GoogleMap, Marker, InfoWindow, LoadScript } from '@react-google-maps/api';
+import React, { useRef, useState, useEffect } from 'react';
+import GoogleMapReact from 'google-map-react';
+import './UserLocationForm.css'; 
+import supabase from '../../supabase/supabase.config';
 
-const containerStyle = {
-    width: '100%',
-    height: '400px'
-};
+const Marker = ({ text }) => <div>{text}</div>;
 
-const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-
-const UserLocationForm = ({ user, show, handleClose, handleSave }) => {
+const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
+    const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
     const [address, setAddress] = useState('');
-    const [position, setPosition] = useState(null);
+    const autoCompleteRef = useRef(null);
 
-    const handleMapClick = (e) => {
-        setPosition(e.latLng.toJSON());
-    };
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (window.google && window.google.maps) {
+                if (!autoCompleteRef.current) {
+                    autoCompleteRef.current = new window.google.maps.places.Autocomplete(document.getElementById('address-input'));
+                    autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
+                    clearInterval(intervalId);
+                }
+            }
+        }, 200);
 
-    const handleAddressChange = (e) => {
-        setAddress(e.target.value);
-    };
+        return () => clearInterval(intervalId);
+    }, []);
 
-    const handleSubmit = async () => {
-        try {
-            handleSave(address, position);
-            handleClose();
-        } catch (error) {
-            console.error('Error al guardar la ubicación:', error);
+    const handlePlaceChanged = () => {
+        const place = autoCompleteRef.current.getPlace();
+        if (place && place.geometry) {
+            const location = place.geometry.location;
+            setPosition({
+                lat: location.lat(),
+                lng: location.lng(),
+            });
+            setAddress(place.formatted_address || place.name);
         }
     };
 
-    return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Registro de Ubicación</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Group controlId="formAddress">
-                    <Form.Label>Dirección</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Ingresa tu dirección"
-                        value={address}
-                        onChange={handleAddressChange}
-                    />
-                </Form.Group>
+    const handleMapChange = ({ center }) => {
+        setPosition({
+            lat: center.lat,
+            lng: center.lng,
+        });
+    };
 
-                <LoadScript googleMapsApiKey={apiKey}>
-                    <GoogleMap
-                        mapContainerStyle={containerStyle}
-                        center={{ lat: -31.417, lng: -64.183 }}
-                        zoom={13}
-                        onClick={handleMapClick}
+    const handleSavePosition = async () => {
+        if (!address) {
+            alert('Por favor ingrese una dirección de envío');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('user_locations') 
+                .insert([
+                    {
+                        user_id: user.id, 
+                        address: address,
+                        latitude: position.lat,
+                        longitude: position.lng
+                    },
+                ]);
+    
+            if (error) throw error;
+    
+            alert(`Ubicación guardada: Dirección: ${address}, Latitud: ${position.lat}, Longitud: ${position.lng}`);
+            handleSave(address, position); 
+        } catch (error) {
+            console.error('Error al guardar la ubicación en Supabase:', error.message);
+            alert('Hubo un error al guardar la ubicación. Inténtalo de nuevo.');
+        }
+    };
+
+    if (!show) return null; 
+
+    return (
+        <div className="floating-form-container">
+            <div className="floating-form">
+                <input
+                    type="text"
+                    id="address-input"
+                    placeholder="Ingresa una dirección"
+                    className="input-address"
+                />
+
+                <div className="map-container">
+                    <GoogleMapReact
+                        bootstrapURLKeys={{ key: 'AIzaSyDYEyfe7BZ2Q7CvuHZASkVhzoJHRkSqJW8', libraries: ['places'] }}
+                        center={position}
+                        defaultZoom={17}
+                        onChange={handleMapChange}
                     >
-                        {position && (
-                            <Marker position={position}>
-                                <InfoWindow>
-                                    <div>
-                                        <p>Ubicación seleccionada</p>
-                                    </div>
-                                </InfoWindow>
-                            </Marker>
-                        )}
-                    </GoogleMap>
-                </LoadScript>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="primary" onClick={handleSubmit}>
-                    Guardar Ubicación
-                </Button>
-            </Modal.Footer>
-        </Modal>
+                        <Marker lat={position.lat} lng={position.lng} text="📍" />
+                    </GoogleMapReact>
+                </div>
+
+                <div className="button-group">
+                    <button onClick={handleClose} className="cancel-button">
+                        Cancelar
+                    </button>
+                    <button onClick={handleSavePosition} className="save-button">
+                        Guardar Ubicación
+                    </button>
+                </div>
+
+            </div>
+        </div>
     );
 };
 

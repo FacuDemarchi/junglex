@@ -13,6 +13,7 @@
     "bootstrap-icons": "^1.11.3",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
+    "google-map-react": "^2.2.1",
     "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
