@@ -85,7 +85,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
 
                 <div className="map-container">
                     <GoogleMapReact
-                        bootstrapURLKeys={{ key: 'AIzaSyDYEyfe7BZ2Q7CvuHZASkVhzoJHRkSqJW8', libraries: ['places'] }}
+                        bootstrapURLKeys={{ key: process.env.GOOGLE_MAPS_APY_KEY, libraries: ['places'] }}
                         center={position}
                         defaultZoom={17}
                         onChange={handleMapChange}
