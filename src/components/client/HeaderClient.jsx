@@ -9,11 +9,11 @@ const HeaderClient = ({ user, onSelectLocation }) => {
     const [userLocations, setUserLocations] = useState([]);
     const [showLocationForm, setShowLocationForm] = useState(false);
     const { signOut } = useAuth();
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
     useEffect(() => {
         async function fetchUserData() {
             if (user) {
-                // Obtener ubicaciones del usuario
                 const { data: locationsData, error: locationsError } = await supabase
                     .from('user_locations')
                     .select()
@@ -25,6 +25,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
 
                 if (locationsData && locationsData.length > 0) {
                     setUserLocations(locationsData);
+                    setSelectedLocation(locationsData[0]); // Selecciona la primera ubicación por defecto
                     onSelectLocation(locationsData[0]);
                 } else {
                     setShowLocationForm(true);
@@ -35,8 +36,12 @@ const HeaderClient = ({ user, onSelectLocation }) => {
         fetchUserData();
     }, [user, onSelectLocation]);
 
+    const handleLocationSelect = (location) => {
+        setSelectedLocation(location); // Actualiza la ubicación seleccionada
+        onSelectLocation(location);
+    };
+
     const handleSaveLocation = async (newLocation) => {
-        // Guardar nueva ubicación
         const { error: locationError } = await supabase
             .from('user_locations')
             .insert([newLocation]);
@@ -45,6 +50,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
             console.error('Error saving new location:', locationError.message);
         } else {
             setUserLocations([...userLocations, newLocation]);
+            setSelectedLocation(newLocation); // Selecciona la nueva ubicación guardada
             onSelectLocation(newLocation);
             setShowLocationForm(false);
         }
@@ -60,11 +66,11 @@ const HeaderClient = ({ user, onSelectLocation }) => {
                         {userLocations.length > 0 && (
                             <Dropdown>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                    {userLocations[0].address}
+                                    {selectedLocation ? selectedLocation.address : 'Selecciona una dirección'}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     {userLocations.map((location, index) => (
-                                        <Dropdown.Item key={index} onClick={() => onSelectLocation(location)}>
+                                        <Dropdown.Item key={index} onClick={() => handleLocationSelect(location)}>
                                             {location.address}
                                         </Dropdown.Item>
                                     ))}
