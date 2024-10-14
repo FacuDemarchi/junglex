@@ -44,7 +44,6 @@ const HeaderComercio = ({ user, onViewChange }) => {
                             <Dropdown.Item onClick={() => onViewChange('HistorialPedidos')}>Historial de pedidos</Dropdown.Item>
                             <Dropdown.Item onClick={() => onViewChange('Config')}>Configuración del comercio</Dropdown.Item>
                             <Dropdown.Item onClick={() => onViewChange('Products')}>Productos</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setShowLocationForm(true)}>Agregar Ubicación</Dropdown.Item>
                             <Dropdown.Item onClick={signOut}>Cerrar sesión</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

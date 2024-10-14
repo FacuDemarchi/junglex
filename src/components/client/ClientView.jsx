@@ -1,5 +1,3 @@
-// src/components/client/VistaCliente.js
-
 import React, { useState, useEffect, useCallback } from 'react';
 import Acordion from './Acordion';
 import Carrito from './Carrito';
@@ -23,22 +21,36 @@ const ClientView = ({ user, userComercio }) => {
     useEffect(() => {
         async function fetchData() {
             // Obtener comercios
-            const { data: comerciosData } = await supabase.from('comercios').select();
+            const { data: comerciosData, error: comerciosError } = await supabase
+                .from('comercios')
+                .select(`*, categorias(*)`);
+
+            if (comerciosError) {
+                console.error('Error al obtener comercios:', comerciosError);
+                return;
+            }
+
             setComercios(comerciosData);
 
             // Obtener productos
-            const { data: productosData } = await supabase.from('productos').select();
+            const { data: productosData, error: productosError } = await supabase
+                .from('productos')
+                .select(`*, tags(*)`);
+
+            if (productosError) {
+                console.error('Error al obtener productos:', productosError);
+                return;
+            }
+
             const productosConCantidad = productosData.map(producto => ({
                 ...producto,
                 cantidad: 0
             }));
             setProductos(productosConCantidad);
 
-            // Obtener categorías
-            const categoriasData = [...new Set(comerciosData.map(comercio => comercio.categoria))];
-            setCategorias(categoriasData);
-
-            
+            // Obtener categorías únicas
+            const categoriasUnicas = [...new Set(comerciosData.map(comercio => comercio.categorias?.nombre))];
+            setCategorias(categoriasUnicas);
         }
 
         fetchData();
@@ -63,8 +75,8 @@ const ClientView = ({ user, userComercio }) => {
             ...producto,
             cantidad: 0
         }));
-        setProductos(productosReseteados)
-    }
+        setProductos(productosReseteados);
+    };
 
     const handleSelectLocation = useCallback((location) => {
         setSelectedLocation(location);
@@ -75,18 +87,19 @@ const ClientView = ({ user, userComercio }) => {
         if (tag) {
             const filtered = comercios.filter(comercio =>
                 productos.some(producto =>
-                    producto.comercio_id === comercio.id && producto.tag.includes(tag)
+                    producto.comercio_id === comercio.id && producto.tag && producto.tag.includes(tag) // Verificar que producto.tag exista
                 )
             );
             setFilteredComercios(filtered);
         } else {
             setFilteredComercios([]);
         }
-    };
+    };    
 
     const handleClearFilters = () => {
         setFilteredComercios([]);
         setSelectedTag(null);
+        setCategoriaSeleccionada(null); // Limpiar categoría seleccionada
     };
 
     const handleCategoriaSelect = (categoria) => {
@@ -96,6 +109,7 @@ const ClientView = ({ user, userComercio }) => {
     };
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;
+
 
     return (
         <div className="container mt-5">

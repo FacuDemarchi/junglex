@@ -1,0 +1,14 @@
+.slick-prev:before, .slick-next:before {
+    color: black; /* Cambia el color de las flechas a negro */
+}
+
+.tag-filtro-carousel {
+    max-width: 95%; /* Ajusta el ancho máximo del carrusel */
+    margin: 0 auto; /* Centra el carrusel */
+}
+
+/* Opcional: si deseas hacer las flechas más grandes */
+.slick-prev, .slick-next {
+    font-size: 30px; /* Aumenta el tamaño de las flechas */
+    z-index: 1; /* Asegúrate de que las flechas estén por encima del contenido */
+}

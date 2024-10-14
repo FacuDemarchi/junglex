@@ -1,60 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import './TagFiltroCarousel.css'; // Asegúrate de crear este archivo para los estilos
 
 const TagFiltroCarousel = ({ productos, selectedTag, onTagSelect }) => {
-    const [tagsPerPage, setTagsPerPage] = useState(3); // Inicialmente mostramos 3 tags por página
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
-        const calculateTagsPerPage = () => {
-            const containerWidth = document.querySelector('.tag-filtro-carousel')?.offsetWidth;
-            const buttonWidth = 110; // Ancho aproximado de un botón de tag (ajustar según tu diseño)
-            if (containerWidth && buttonWidth > 0) {
-                const newTagsPerPage = Math.floor(containerWidth / buttonWidth);
-                setTagsPerPage(newTagsPerPage > 0 ? newTagsPerPage : 1);
-            }
-        };
-
-        calculateTagsPerPage();
-
-        window.addEventListener('resize', calculateTagsPerPage);
-        return () => window.removeEventListener('resize', calculateTagsPerPage);
-    }, []);
-
-    const tags = [...new Set(productos.flatMap(producto => producto.tag))];
+        const uniqueTags = [...new Set(productos.map(producto => producto.tags.nombre))];
+        setTags(uniqueTags);
+    }, [productos]);
 
     const handleTagClick = (tag) => {
-        onTagSelect(tag === selectedTag ? null : tag); // Toggle selección de tag
+        onTagSelect(tag === selectedTag ? null : tag);
     };
 
-    const renderTags = () => {
-        const tagPages = [];
-        for (let i = 0; i < tags.length; i += tagsPerPage) {
-            const tagsChunk = tags.slice(i, i + tagsPerPage);
-            tagPages.push(
-                <Carousel.Item key={i}>
-                    <div className="d-flex justify-content-center">
-                        {tagsChunk.map((tag, index) => (
-                            <button
-                                key={index}
-                                className={`btn btn-outline-primary mx-1 ${selectedTag === tag ? 'active' : ''}`}
-                                onClick={() => handleTagClick(tag)}
-                            >
-                                {tag}
-                            </button>
-                        ))}
-                    </div>
-                </Carousel.Item>
-            );
-        }
-        return tagPages;
+    const settings = {
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: { slidesToShow: 2 },
+            },
+            {
+                breakpoint: 600,
+                settings: { slidesToShow: 1 },
+            },
+        ],
     };
 
     return (
         <div className="tag-filtro-carousel mb-3">
-            <Carousel>
-                {renderTags()}
-            </Carousel>
+            <Slider {...settings}>
+                {tags.map((tag, index) => (
+                    <div key={index} className="text-center" style={{ padding: '10px' }}>
+                        <button
+                            className={`btn btn-outline-primary mx-1 ${selectedTag === tag ? 'active' : ''}`}
+                            onClick={() => handleTagClick(tag)}
+                            style={{ width: '100%', padding: '10px 15px', borderRadius: '5px' }}
+                        >
+                            {tag}
+                        </button>
+                    </div>
+                ))}
+            </Slider>
+            <style jsx>{`
+                .active {
+                    background-color: #007bff;
+                    color: white;
+                }
+            `}</style>
         </div>
     );
 };
