@@ -9,19 +9,25 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
     const [address, setAddress] = useState('');
     const autoCompleteRef = useRef(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (window.google && window.google.maps) {
-                if (!autoCompleteRef.current) {
-                    autoCompleteRef.current = new window.google.maps.places.Autocomplete(document.getElementById('address-input'));
-                    autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
-                    clearInterval(intervalId);
-                }
+        const loadAutocomplete = () => {
+            if (window.google && window.google.maps && window.google.maps.places) {
+                autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current);
+                autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
             }
-        }, 200);
+        };
 
-        return () => clearInterval(intervalId);
+        if (!autoCompleteRef.current) {
+            loadAutocomplete();
+        }
+
+        return () => {
+            if (autoCompleteRef.current) {
+                window.google.maps.event.clearInstanceListeners(autoCompleteRef.current);
+            }
+        };
     }, []);
 
     const handlePlaceChanged = () => {
@@ -81,6 +87,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
                     id="address-input"
                     placeholder="Ingresa una dirección"
                     className="input-address"
+                    ref={inputRef}
                 />
 
                 <div className="map-container">

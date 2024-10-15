@@ -141,7 +141,7 @@ const ClientView = ({ user, userComercio }) => {
                 </div>
                 <div className="col-md-9">
                     <TagFiltroCarousel productos={productos} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
-                    <h1>Lista de Comercios y Productos</h1>
+                    <h3>Listado de Comercios</h3>
                     <Acordion
                         comercios={comerciosFiltrados}
                         productos={productos}

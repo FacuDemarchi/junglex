@@ -5,13 +5,17 @@ import supabase from '../../supabase/supabase.config';
 const MisProductos = ({ user }) => {
     const [productos, setProductos] = useState([]);
     const [editableProductoId, setEditableProductoId] = useState(null);
+    const [tags, setTags] = useState([]); // Tags globales disponibles
 
     useEffect(() => {
         if (user) {
             async function fetchProductos() {
                 const { data, error } = await supabase
                     .from('productos')
-                    .select()
+                    .select(`
+                        *,
+                        tags_producto(*, tags(*))
+                    `)
                     .eq('comercio_id', user.id);
 
                 if (error) {
@@ -19,10 +23,24 @@ const MisProductos = ({ user }) => {
                 } else {
                     setProductos(data);
                 }
+                console.log('productos: ', data);
             }
             fetchProductos();
         }
     }, [user]);
+
+    // Traer todos los tags disponibles
+    useEffect(() => {
+        async function fetchTags() {
+            const { data, error } = await supabase.from('tags').select('*');
+            if (error) {
+                console.error('Error al traer los tags:', error);
+            } else {
+                setTags(data);
+            }
+        }
+        fetchTags();
+    }, []);
 
     const handleChange = (e, id) => {
         const { name, value, type, checked } = e.target;
@@ -30,6 +48,22 @@ const MisProductos = ({ user }) => {
             prevProductos.map((producto) =>
                 producto.id === id ? { ...producto, [name]: type === 'checkbox' ? checked : value } : producto
             )
+        );
+    };
+
+    // Manejar la selección de tags
+    const handleTagCheckboxChange = (productoId, tagId) => {
+        setProductos((prevProductos) =>
+            prevProductos.map((producto) => {
+                if (producto.id === productoId) {
+                    const tagsSeleccionados = producto.tagsProductoSeleccionados || producto.tags_producto.map(tp => tp.tags.id);
+                    const updatedTags = tagsSeleccionados.includes(tagId)
+                        ? tagsSeleccionados.filter((id) => id !== tagId) // Deseleccionar
+                        : [...tagsSeleccionados, tagId]; // Seleccionar
+                    return { ...producto, tagsProductoSeleccionados: updatedTags };
+                }
+                return producto;
+            })
         );
     };
 
@@ -56,7 +90,6 @@ const MisProductos = ({ user }) => {
                         prevProductos.map((p) => p.id === null ? data[0] : p)
                     );
                 }
-                
                 setEditableProductoId(null);
             }
         } else {
@@ -74,6 +107,21 @@ const MisProductos = ({ user }) => {
             if (error) {
                 console.error('Error al actualizar el producto:', error);
             } else {
+                // Guardar tags del producto
+                await supabase
+                    .from('tags_producto')
+                    .delete() // Eliminar los tags actuales del producto
+                    .eq('producto', id);
+
+                const tagsToInsert = producto.tagsProductoSeleccionados.map((tagId) => ({
+                    producto: id,
+                    tag: tagId
+                }));
+
+                await supabase
+                    .from('tags_producto')
+                    .insert(tagsToInsert);
+
                 alert('Producto actualizado exitosamente');
                 setEditableProductoId(null);
             }
@@ -97,7 +145,8 @@ const MisProductos = ({ user }) => {
                 description: '',
                 precio: '',
                 disponible: false,
-                comercio_id: user.id
+                comercio_id: user.id,
+                tagsProductoSeleccionados: []
             }
         ]);
         setEditableProductoId(null);
@@ -109,11 +158,12 @@ const MisProductos = ({ user }) => {
             <Table striped bordered hover className="mt-4">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Nombre</th>
                         <th>Description</th>
                         <th>Precio</th>
                         <th>Disponible</th>
-                        <th>Acciones</th>
+                        <th>Tags</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -121,6 +171,14 @@ const MisProductos = ({ user }) => {
                         <tr key={producto.id || 'new'}>
                             {editableProductoId === producto.id || producto.id === null ? (
                                 <>
+                                    <td>
+                                        <Button variant="success" onClick={() => handleSave(producto.id) }>
+                                            Guardar
+                                        </Button>
+                                        <Button variant="warning" onClick={handleCancel}>
+                                            Cancelar
+                                        </Button>
+                                    </td>
                                     <td>
                                         <Form.Control
                                             type="text"
@@ -154,31 +212,38 @@ const MisProductos = ({ user }) => {
                                         />
                                     </td>
                                     <td>
-                                        <Button variant="success" onClick={() => handleSave(producto.id)}>
-                                            Guardar
-                                        </Button>
-                                        <Button variant="secondary" onClick={handleCancel}>
-                                            Cancelar
-                                        </Button>
+                                        {tags.map((tag) => (
+                                            <Form.Check 
+                                                key={tag.id}
+                                                type="checkbox"
+                                                label={tag.nombre}
+                                                checked={producto.tagsProductoSeleccionados?.includes(tag.id) || producto.tags_producto.some(tagProd => tagProd.tags.id === tag.id)}
+                                                onChange={() => handleTagCheckboxChange(producto.id, tag.id)}
+                                            />
+                                        ))}
                                     </td>
                                 </>
                             ) : (
                                 <>
+                                    <td>
+                                        <Button variant="secondary" onClick={() => handleEdit(producto.id)}>
+                                            Editar
+                                        </Button>
+                                    </td>
                                     <td>{producto.nombre}</td>
                                     <td>{producto.description}</td>
                                     <td>{producto.precio}</td>
                                     <td>{producto.disponible ? 'Sí' : 'No'}</td>
                                     <td>
-                                        <Button variant="warning" onClick={() => handleEdit(producto.id)}>
-                                            Editar
-                                        </Button>
+                                        {/* Mostrar los tags asociados al producto */}
+                                        {producto.tags_producto.map(tagProducto => tagProducto.tags.nombre).join(', ')}
                                     </td>
                                 </>
                             )}
                         </tr>
                     ))}
                     <tr>
-                        <td colSpan="5">
+                        <td colSpan="6">
                             <Button variant="primary" onClick={handleAddRow}>
                                 +
                             </Button>
