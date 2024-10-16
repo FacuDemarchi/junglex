@@ -70,7 +70,8 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
             if (error) throw error;
     
             alert(`Ubicación guardada: Dirección: ${address}, Latitud: ${position.lat}, Longitud: ${position.lng}`);
-            handleSave(address, position); 
+            handleSave(address, position);
+            handleClose();
         } catch (error) {
             console.error('Error al guardar la ubicación en Supabase:', error.message);
             alert('Hubo un error al guardar la ubicación. Inténtalo de nuevo.');

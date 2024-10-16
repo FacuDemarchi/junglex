@@ -25,7 +25,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
 
                 if (locationsData && locationsData.length > 0) {
                     setUserLocations(locationsData);
-                    setSelectedLocation(locationsData[0]); // Selecciona la primera ubicación por defecto
+                    setSelectedLocation(locationsData[0]); 
                     onSelectLocation(locationsData[0]);
                 } else {
                     setShowLocationForm(true);
@@ -37,7 +37,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
     }, [user, onSelectLocation]);
 
     const handleLocationSelect = (location) => {
-        setSelectedLocation(location); // Actualiza la ubicación seleccionada
+        setSelectedLocation(location); 
         onSelectLocation(location);
     };
 
@@ -50,7 +50,7 @@ const HeaderClient = ({ user, onSelectLocation }) => {
             console.error('Error saving new location:', locationError.message);
         } else {
             setUserLocations([...userLocations, newLocation]);
-            setSelectedLocation(newLocation); // Selecciona la nueva ubicación guardada
+            setSelectedLocation(newLocation); 
             onSelectLocation(newLocation);
             setShowLocationForm(false);
         }
