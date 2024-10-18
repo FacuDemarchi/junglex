@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import GoogleMapReact from 'google-map-react';
-import './UserLocationForm.css'; 
+import './UserLocationForm.css';
 import supabase from '../../supabase/supabase.config';
 
 const Marker = ({ text }) => <div>{text}</div>;
@@ -8,6 +8,7 @@ const Marker = ({ text }) => <div>{text}</div>;
 const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
     const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');  
     const autoCompleteRef = useRef(null);
     const inputRef = useRef(null);
 
@@ -56,33 +57,56 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
         }
 
         try {
-            const { error } = await supabase
-                .from('user_locations') 
+            const { error: locationError } = await supabase
+                .from('user_locations')
                 .insert([
                     {
-                        user_id: user.id, 
+                        user_id: user.id,
                         address: address,
                         latitude: position.lat,
                         longitude: position.lng
                     },
                 ]);
-    
-            if (error) throw error;
-    
+
+            if (locationError) throw locationError;
+
+            if (!user.phone && phone) {
+                const { error: phoneError } = await supabase
+                    .from('user_data')
+                    .upsert([
+                        {
+                            user_id: user.id,
+                            phone: phone,
+                        },
+                    ]);
+
+                if (phoneError) throw phoneError;
+            }
+
             alert(`Ubicación guardada: Dirección: ${address}, Latitud: ${position.lat}, Longitud: ${position.lng}`);
             handleSave(address, position);
             handleClose();
         } catch (error) {
-            console.error('Error al guardar la ubicación en Supabase:', error.message);
-            alert('Hubo un error al guardar la ubicación. Inténtalo de nuevo.');
+            console.error('Error al guardar la ubicación o el teléfono en Supabase:', error.message);
+            alert('Hubo un error al guardar la ubicación o el teléfono. Inténtalo de nuevo.');
         }
     };
 
-    if (!show) return null; 
+    if (!show) return null;
 
     return (
         <div className="floating-form-container">
             <div className="floating-form">
+                {!user.phone && (
+                    <input
+                        type="text"
+                        id="phone-input"
+                        placeholder="Ingresa un número de teléfono"
+                        className="input-address"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                    />
+                )}
                 <input
                     type="text"
                     id="address-input"
@@ -110,7 +134,6 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
                         Guardar Ubicación
                     </button>
                 </div>
-
             </div>
         </div>
     );

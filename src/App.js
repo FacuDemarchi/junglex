@@ -1,46 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuth } from './context/AuthContext';
-import supabase from './supabase/supabase.config';
 import ComercioView from './components/comercio/ComercioView';
 import ClientView from './components/client/ClientView';
-import UnknownUser from './components/noLogedIn/UnknownUser'
+import UnknownUser from './components/noLogedIn/UnknownUser';
 
 const App = () => {
     const { user, signInWithGoogle } = useAuth();
-    const [userComercio, setUserComercio] = useState(null);
 
-    useEffect(() => {
-        if (user) {
-            async function checkUserComercio() {
-                const { data, error } = await supabase
-                    .from('comercios')
-                    .select()
-                    .eq('id', user.id);
+    if (!user) {
+        return <UnknownUser signInWithGoogle={signInWithGoogle} />;
+    }
 
-                if (error) {
-                    console.error('Error checking user comercio:', error);
-                    return;
-                }
-
-                setUserComercio(data.length > 0);
-            }
-            checkUserComercio();
-        }
-    }, [user]);
-
-    return (
-        <>
-            {user ? (
-                userComercio ? (
-                    <ComercioView user={user}/>
-                ) : (
-                    <ClientView user={user}/>
-                )
-            ) : (
-                <UnknownUser signInWithGoogle={signInWithGoogle}/>
-            )}
-        </>
-    );
+    switch (user.user_type) {
+        case 'cliente':
+            return <ClientView user={user} />;
+        case 'comercio':
+            return <ComercioView user={user} />;
+        default:
+            return <UnknownUser signInWithGoogle={signInWithGoogle} />;
+    }
 };
 
 export default App;
