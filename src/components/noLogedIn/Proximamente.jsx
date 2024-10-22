@@ -3,6 +3,8 @@ import { Accordion } from 'react-bootstrap';
 
 const Proximamente = () => {
     return (
+        <>
+        <h2>Proximamente</h2>
         <Accordion>
             <Accordion.Item eventKey="0">
                 <Accordion.Header>Característica 1: Integración de Criptomonedas Estables</Accordion.Header>
@@ -44,6 +46,7 @@ const Proximamente = () => {
             </Accordion.Item>
 
         </Accordion>
+        </>
     );
 };
 

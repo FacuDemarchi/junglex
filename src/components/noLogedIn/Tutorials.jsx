@@ -5,14 +5,6 @@ const Tutorials = () => {
     return (
         <div>
             <h2>Tutoriales</h2>
-            <p>
-                En nuestra plataforma, creemos que el uso de criptomonedas debe ser accesible y fácil para todos. Es por eso que hemos creado este apartado de tutoriales. Sabemos que para algunos usuarios, el uso de una wallet de criptomonedas, la compra de criptomonedas o incluso el proceso de realizar un pedido y pagarlo con criptomonedas puede ser nuevo. Con estos tutoriales, aprenderás de manera sencilla cómo utilizar todas las funciones de nuestra plataforma.
-            </p>
-
-            <h3>¿Por qué es importante este apartado?</h3>
-            <p>
-                Las criptomonedas son una tecnología nueva para muchos, y es esencial que nuestros usuarios sepan cómo utilizarlas de manera segura y efectiva dentro de la plataforma. Aquí te enseñamos:
-            </p>
             <Accordion>
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header><img src={`${process.env.PUBLIC_URL}/MetaMask.png`} alt="MetaMask" style={{ width: '30px', margin: '10px' }}/><strong>Cómo configurar y usar una billetera de criptomonedas</strong></Accordion.Header>
