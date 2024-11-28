@@ -8,38 +8,34 @@ const Marker = ({ text }) => <div>{text}</div>;
 const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
     const [address, setAddress] = useState('');
-    const [phone, setPhone] = useState('');  
+    const [phone, setPhone] = useState(null);
     const autoCompleteRef = useRef(null);
     const inputRef = useRef(null);
 
     useEffect(() => {
-        const loadAutocomplete = () => {
+        const interval = setInterval(() => {
             if (window.google && window.google.maps && window.google.maps.places) {
+                clearInterval(interval); 
                 autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current);
                 autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
             }
-        };
-
-        if (!autoCompleteRef.current) {
-            loadAutocomplete();
-        }
-
-        return () => {
-            if (autoCompleteRef.current) {
-                window.google.maps.event.clearInstanceListeners(autoCompleteRef.current);
-            }
-        };
-    }, []);
+        }, 500);
+    
+        return () => clearInterval(interval);
+    }, []);    
 
     const handlePlaceChanged = () => {
         const place = autoCompleteRef.current.getPlace();
         if (place && place.geometry) {
             const location = place.geometry.location;
-            setPosition({
+            const newPosition = {
                 lat: location.lat(),
                 lng: location.lng(),
-            });
+            };
+            setPosition(newPosition); 
             setAddress(place.formatted_address || place.name);
+    
+            handleMapChange({ center: newPosition });
         }
     };
 
@@ -70,7 +66,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
 
             if (locationError) throw locationError;
 
-            if (!user.phone && phone) {
+            if (phone) {
                 const { error: phoneError } = await supabase
                     .from('user_data')
                     .upsert([
@@ -94,10 +90,12 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
 
     if (!show) return null;
 
+    console.log('Address:', address, '  position lat:', position.lat, ' lng:', position.lng);
+
     return (
         <div className="floating-form-container">
             <div className="floating-form">
-                {!user.phone && (
+                {user?.user_data && !user.user_data.phone && (
                     <input
                         type="text"
                         id="phone-input"

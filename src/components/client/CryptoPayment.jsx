@@ -1,47 +1,93 @@
 import React, { useEffect, useState } from 'react';
+import { ethers } from 'ethers';
 import detectEthereumProvider from '@metamask/detect-provider';
-import { BrowserProvider, parseUnits } from 'ethers';
+import ABI from '../contracts/abi.json';
 
-// CriptoPayment maneja toda la logica relacionada con el uso de cryptomonedas, incluyendo la detección de Metamask, la configuración con el proveedor y la realización de la transacción
-
-const CryptoPayment = ({ totalCompraRedondeado }) => {
+const CryptoPayment = ({ totalCompraRedondeado, comercio }) => {
     const [provider, setProvider] = useState(null);
+    const [account, setAccount] = useState(null);
+    const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
 
     useEffect(() => {
         const initMetamask = async () => {
-            const detectProvider = await detectEthereumProvider();
-            if (detectProvider) {
-                setProvider(new BrowserProvider(detectProvider));
+            try {
+                const provider = await detectEthereumProvider();
+                
+                if (provider) {
+                    setProvider(new ethers.BrowserProvider(window.ethereum));
+                    // Solicitar conexión a MetaMask
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+                    setAccount(accounts[0]);
+                } else {
+                    alert('Por favor, instala MetaMask!');
+                }
+            } catch (error) {
+                console.error('Error al inicializar MetaMask:', error);
             }
         };
+
         initMetamask();
     }, []);
 
     const onPayWithCrypto = async () => {
-        const signer = provider.getSigner();
         try {
-            const valueInWei = parseUnits(totalCompraRedondeado.toString(), 'ether');
-            const transaction = await signer.sendTransaction({
-                to: 'DIRECCION_DEL_COMERCIO', 
-                value: valueInWei
-            });
-            alert(`Transacción enviada! Hash: ${transaction.hash}`);
+            if (!provider || !comercio?.public_key || !CONTRACT_ADDRESS) {
+                alert('Faltan datos necesarios para el pago');
+                return;
+            }
+
+            const signer = await provider.getSigner();
+            const contract = new ethers.Contract(
+                CONTRACT_ADDRESS,
+                ABI,
+                signer
+            );
+
+            const amountInWei = ethers.parseEther(totalCompraRedondeado.toString());
+
+            const tx = await contract.dividirPagoBNB(
+                comercio.public_key,
+                {
+                    value: amountInWei,
+                    gasLimit: 300000
+                }
+            );
+
+            const receipt = await tx.wait();
+            
+            if (receipt.status === 1) {
+                alert(`¡Pago exitoso! Hash de transacción: ${tx.hash}`);
+            } else {
+                alert('La transacción falló');
+            }
+
         } catch (error) {
-            console.error('Error al realizar el pago:', error.message);
-            alert('Error al realizar el pago.');
+            console.error('Error en el pago:', error);
+            alert(`Error al procesar el pago: ${error.message}`);
         }
     };
 
     return (
-        provider && (
-            <button
-                className="btn btn-warning"
-                onClick={onPayWithCrypto}
-                disabled={!provider}
-            >
-                Cripto pay
-            </button>
-        )
+        <div>
+            {!account ? (
+                <button 
+                    className="btn btn-warning"
+                    onClick={() => window.ethereum.request({ method: 'eth_requestAccounts' })}
+                >
+                    Conectar Wallet
+                </button>
+            ) : (
+                <button
+                    className="btn btn-warning"
+                    onClick={onPayWithCrypto}
+                    disabled={!provider || !comercio?.public_key || !CONTRACT_ADDRESS}
+                >
+                    Pagar con Crypto
+                </button>
+            )}
+        </div>
     );
 };
 

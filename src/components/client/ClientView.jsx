@@ -6,21 +6,18 @@ import TagFiltroCarousel from './TagFiltroCarousel';
 import { Modal } from 'react-bootstrap';
 import ComercioForm from './ComercioForm';
 import supabase from '../../supabase/supabase.config';
-import HeaderClient from './HeaderClient';
 
-const ClientView = ({ user, userComercio }) => {
+const ClientView = ({ user, selectedLocation }) => {
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
     const [filteredComercios, setFilteredComercios] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
-            // Obtener comercios
             const { data: comerciosData, error: comerciosError } = await supabase
                 .from('comercios')
                 .select(`*, categorias(*)`);
@@ -32,7 +29,6 @@ const ClientView = ({ user, userComercio }) => {
 
             setComercios(comerciosData);
 
-            // Obtener productos
             const { data: productosData, error: productosError } = await supabase
                 .from('productos')
                 .select(`*, tags(*)`);
@@ -48,7 +44,6 @@ const ClientView = ({ user, userComercio }) => {
             }));
             setProductos(productosConCantidad);
 
-            // Obtener categorías únicas
             const categoriasUnicas = [...new Set(comerciosData.map(comercio => comercio.categorias?.nombre))];
             setCategorias(categoriasUnicas);
         }
@@ -78,16 +73,12 @@ const ClientView = ({ user, userComercio }) => {
         setProductos(productosReseteados);
     };
 
-    const handleSelectLocation = useCallback((location) => {
-        setSelectedLocation(location);
-    }, []);
-
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
         if (tag) {
             const filtered = comercios.filter(comercio =>
                 productos.some(producto =>
-                    producto.comercio_id === comercio.id && producto.tag && producto.tag.includes(tag) // Verificar que producto.tag exista
+                    producto.comercio_id === comercio.id && producto.tag && producto.tag.includes(tag) 
                 )
             );
             setFilteredComercios(filtered);
@@ -99,21 +90,19 @@ const ClientView = ({ user, userComercio }) => {
     const handleClearFilters = () => {
         setFilteredComercios([]);
         setSelectedTag(null);
-        setCategoriaSeleccionada(null); // Limpiar categoría seleccionada
+        setCategoriaSeleccionada(null); 
     };
 
     const handleCategoriaSelect = (categoria) => {
         setCategoriaSeleccionada(categoria);
         setFilteredComercios([]);
-        handleTagSelect(null); // Limpiar filtro de tags
+        handleTagSelect(null); 
     };
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;
 
-
     return (
         <div className="container mt-5">
-            {!userComercio && <HeaderClient user={user} onSelectLocation={handleSelectLocation} />}
             <div className="row">
                 <div className="col-md-3">
                     <div className="d-flex justify-content-between align-items-center">

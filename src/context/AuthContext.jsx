@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const { data, error } = await supabase
           .from('user_data')
-          .select('phone, user_type')
+          .select('*')
           .eq('user_id', user.id);
 
         if (error) {
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         if (data && data.length > 0) {
-          const userWithPhone = { ...user, phone: data[0].phone, user_type: data[0].user_type };
+          const userWithPhone = { ...user, user_data: data[0] };
           setUser(userWithPhone);
         } else {
           setUser(user); 

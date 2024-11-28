@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import HeaderComercio from './HeaderComercio';
+// import HeaderComercio from './HeaderComercio';
 import MisPedidos from './MisPedidos';
 import MisProductos from './MisProductos';
 import HistorialPedidos from './HistorialPedidos';
 import ConfigComercio from './ConfigComercio';
 import ClientView from '../client/ClientView';
 
-const ComercioView = ({ user }) => {
-    const [currentView, setCurrentView] = useState('Pedidos');
-    
-    const handleViewChange = (view) => {
-        setCurrentView(view);
-    };
+const ComercioView = ({ user, currentView }) => {
 
     const renderView = () => {
         switch (currentView) {
@@ -30,7 +25,7 @@ const ComercioView = ({ user }) => {
 
     return (
         <div className='container mt-4'>
-            <HeaderComercio user={user} onViewChange={handleViewChange} />
+            {/* <HeaderComercio user={user} onViewChange={handleViewChange} /> */}
             {renderView()}
         </div>
     );
