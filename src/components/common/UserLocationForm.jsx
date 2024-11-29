@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './UserLocationForm.css';
 import supabase from '../../supabase/supabase.config';
@@ -12,6 +12,27 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const autoCompleteRef = useRef(null);
     const inputRef = useRef(null);
 
+    const handleMapChange = useCallback(({ center }) => {
+        setPosition({
+            lat: center.lat,
+            lng: center.lng,
+        });
+    }, []);
+
+    const handlePlaceChanged = useCallback(() => {
+        const place = autoCompleteRef.current.getPlace();
+        if (place && place.geometry) {
+            const location = place.geometry.location;
+            const newPosition = {
+                lat: location.lat(),
+                lng: location.lng(),
+            };
+            setPosition(newPosition); 
+            setAddress(place.formatted_address || place.name);
+            handleMapChange({ center: newPosition });
+        }
+    }, [handleMapChange]);
+
     useEffect(() => {
         const interval = setInterval(() => {
             if (window.google && window.google.maps && window.google.maps.places) {
@@ -22,29 +43,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
         }, 500);
     
         return () => clearInterval(interval);
-    }, []);    
-
-    const handlePlaceChanged = () => {
-        const place = autoCompleteRef.current.getPlace();
-        if (place && place.geometry) {
-            const location = place.geometry.location;
-            const newPosition = {
-                lat: location.lat(),
-                lng: location.lng(),
-            };
-            setPosition(newPosition); 
-            setAddress(place.formatted_address || place.name);
-    
-            handleMapChange({ center: newPosition });
-        }
-    };
-
-    const handleMapChange = ({ center }) => {
-        setPosition({
-            lat: center.lat,
-            lng: center.lng,
-        });
-    };
+    }, [handlePlaceChanged]);
 
     const handleSavePosition = async () => {
         if (!address) {

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Acordion from './Acordion';
 import Carrito from './Carrito';
 import CategoriaFiltro from './CategoriaFiltro';
-import TagFiltroCarousel from './TagFiltroCarousel';
-import { Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap'; 
 import ComercioForm from './ComercioForm';
 import supabase from '../../supabase/supabase.config';
 
@@ -129,8 +128,7 @@ const ClientView = ({ user, selectedLocation }) => {
                     />
                 </div>
                 <div className="col-md-9">
-                    <TagFiltroCarousel productos={productos} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
-                    <h3>Listado de Comercios</h3>
+                    {/*<TagFiltroCarousel productos={productos} selectedTag={selectedTag} onTagSelect={handleTagSelect} />*/}
                     <Acordion
                         comercios={comerciosFiltrados}
                         productos={productos}
@@ -139,17 +137,18 @@ const ClientView = ({ user, selectedLocation }) => {
                     />
                 </div>
             </div>
-            <footer>
-                {!showForm ? (
-                    <button className="btn btn-primary mt-3" onClick={() => setShowForm(true)}>
+            <footer style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: 'white', padding: '10px', zIndex: 1000 }}>
+                <div className="d-flex justify-content-start" style={{ paddingLeft: '10px' }}>
+                    <button className="btn btn-primary" onClick={() => setShowForm(true)}>
                         Registrar mi comercio
                     </button>
-                ) : (
-                    <Modal show={showForm} onHide={() => setShowForm(false)}>
-                        <ComercioForm user={user} onClose={() => setShowForm(false)} />
-                    </Modal>
-                )}
+                </div>
             </footer>
+            {showForm && (
+                <Modal show={showForm} onHide={() => setShowForm(false)}>
+                    <ComercioForm user={user} onClose={() => setShowForm(false)} />
+                </Modal>
+            )}
         </div>
     );
 };

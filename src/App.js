@@ -34,7 +34,7 @@ const App = () => {
             );
         case 'comercio':
             return <div className='container'>
-                <Header user={user} handleComercioView={handleComercioView} />
+                <Header user={user} handleComercioView={handleComercioView} selectedLocation={selectedLocation} handleSelectLocation={handleSelectLocation} />
                 <ComercioView user={user} currentView={comercioView} />
             </div>;
         default:

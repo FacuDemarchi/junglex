@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import detectEthereumProvider from '@metamask/detect-provider';
 import ABI from '../contracts/abi.json';
@@ -9,27 +9,46 @@ const CryptoPayment = ({ totalCompraRedondeado, comercio }) => {
     const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
 
     useEffect(() => {
-        const initMetamask = async () => {
+        const checkConnection = async () => {
             try {
                 const provider = await detectEthereumProvider();
                 
                 if (provider) {
-                    setProvider(new ethers.BrowserProvider(window.ethereum));
-                    // Solicitar conexión a MetaMask
                     const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts'
+                        method: 'eth_accounts'
                     });
-                    setAccount(accounts[0]);
-                } else {
-                    alert('Por favor, instala MetaMask!');
+                    
+                    if (accounts.length > 0) {
+                        setProvider(new ethers.BrowserProvider(window.ethereum));
+                        setAccount(accounts[0]);
+                    }
                 }
             } catch (error) {
-                console.error('Error al inicializar MetaMask:', error);
+                console.error('Error al verificar conexión con MetaMask:', error);
             }
         };
 
-        initMetamask();
+        checkConnection();
     }, []);
+
+    const conectarWallet = async () => {
+        try {
+            const provider = await detectEthereumProvider();
+            
+            if (provider) {
+                setProvider(new ethers.BrowserProvider(window.ethereum));
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                setAccount(accounts[0]);
+            } else {
+                alert('Por favor, instala MetaMask!');
+            }
+        } catch (error) {
+            console.error('Error al conectar con MetaMask:', error);
+            alert('Error al conectar con MetaMask');
+        }
+    };
 
     const onPayWithCrypto = async () => {
         try {
@@ -74,18 +93,28 @@ const CryptoPayment = ({ totalCompraRedondeado, comercio }) => {
             {!account ? (
                 <button 
                     className="btn btn-warning"
-                    onClick={() => window.ethereum.request({ method: 'eth_requestAccounts' })}
+                    onClick={conectarWallet}
                 >
-                    Conectar Wallet
+                    Conectar con MetaMask
                 </button>
             ) : (
-                <button
-                    className="btn btn-warning"
-                    onClick={onPayWithCrypto}
-                    disabled={!provider || !comercio?.public_key || !CONTRACT_ADDRESS}
-                >
-                    Pagar con Crypto
-                </button>
+                <div>
+                    <button
+                        className="btn btn-success"
+                        onClick={onPayWithCrypto}
+                        disabled={!provider || !comercio?.public_key || !CONTRACT_ADDRESS}
+                    >
+                        Pagar {totalCompraRedondeado} BNB
+                    </button>
+                    
+                    {(!provider || !comercio?.public_key || !CONTRACT_ADDRESS) && (
+                        <div className="text-danger mt-2 small">
+                            {!provider && "No se detectó el proveedor de MetaMask. "}
+                            {!comercio?.public_key && "El comercio no tiene configurada una billetera. "}
+                            {!CONTRACT_ADDRESS && "No se ha configurado la dirección del contrato. "}
+                        </div>
+                    )}
+                </div>
             )}
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import HeaderComercio from './HeaderComercio';
 import MisPedidos from './MisPedidos';
 import MisProductos from './MisProductos';
