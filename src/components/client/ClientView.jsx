@@ -5,8 +5,9 @@ import CategoriaFiltro from './CategoriaFiltro';
 import { Modal } from 'react-bootstrap'; 
 import ComercioForm from './ComercioForm';
 import supabase from '../../supabase/supabase.config';
+import Header from '../common/Header';
 
-const ClientView = ({ user, selectedLocation }) => {
+const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -102,6 +103,7 @@ const ClientView = ({ user, selectedLocation }) => {
 
     return (
         <div className="container mt-5">
+            <Header user={user} selectedLocation={selectedLocation} handleSelectLocation={handleSelectLocation} />
             <div className="row">
                 <div className="col-md-3">
                     <div className="d-flex justify-content-between align-items-center">

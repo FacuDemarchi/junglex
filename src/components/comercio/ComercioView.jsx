@@ -1,12 +1,12 @@
 import React from 'react';
-// import HeaderComercio from './HeaderComercio';
+import Header from '../common/Header';
 import MisPedidos from './MisPedidos';
 import MisProductos from './MisProductos';
 import HistorialPedidos from './HistorialPedidos';
 import ConfigComercio from './ConfigComercio';
 import ClientView from '../client/ClientView';
 
-const ComercioView = ({ user, currentView }) => {
+const ComercioView = ({ user, currentView, handleComercioView }) => {
 
     const renderView = () => {
         switch (currentView) {
@@ -25,7 +25,7 @@ const ComercioView = ({ user, currentView }) => {
 
     return (
         <div className='container mt-4'>
-            {/* <HeaderComercio user={user} onViewChange={handleViewChange} /> */}
+            <Header user={user} handleComercioView={handleComercioView} />
             {renderView()}
         </div>
     );

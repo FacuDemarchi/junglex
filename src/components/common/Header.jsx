@@ -90,7 +90,7 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                     {user && (
                         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                             <Nav className="align-items-center">
-                                {userLocations.length > 0 ? (
+                                {user?.user_data?.user_type === 'cliente' && userLocations.length > 0 ? (
                                     <Dropdown>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {selectedLocation ? selectedLocation.address : 'Selecciona una ubicación'}
@@ -108,11 +108,11 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                                             </Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown>
-                                ) : (
+                                ) : user?.user_data?.user_type === 'cliente' ? (
                                     <Button variant="outline-success" onClick={() => setShowLocationForm(true)}>
                                         Agregar dirección
                                     </Button>
-                                )}
+                                ) : null}
                             </Nav>
                             <Dropdown className="ml-3">
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
