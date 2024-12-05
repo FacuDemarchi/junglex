@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import CantidadControl from './CantidadControl';
+import { useCoin } from '../../context/CoinContext';
 
 const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCantidad }) => {
     const [activeIndex, setActiveIndex] = useState(null);
+    const { currency } = useCoin();
 
     const onTitleClick = (index) => {
         setActiveIndex(index === activeIndex ? null : index);
@@ -36,7 +38,7 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
                                         .filter(producto => producto.comercio_id === comercio.id)
                                         .map(producto => (
                                             <li key={producto.id}>
-                                                {producto.nombre}: ${producto.precio}{' '}
+                                                {producto.nombre}: ${producto.precioConvertido? producto.precioConvertido : producto.precio} {currency.symbol}
                                                 <CantidadControl
                                                     cantidad={producto.cantidad}
                                                     onIncrementar={() => incrementarCantidad(producto.id)}

@@ -12,6 +12,7 @@
     "axios": "^1.7.8",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
     "google-map-react": "^2.2.1",
@@ -28,7 +29,8 @@
     "slick-carousel": "^1.8.1",
     "supabase": "^1.178.2",
     "swiper": "^11.1.14",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "web3": "^4.15.0"
   },
   "scripts": {
     "start": "react-scripts start",

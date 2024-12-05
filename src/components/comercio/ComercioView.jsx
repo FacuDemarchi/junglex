@@ -1,17 +1,15 @@
 import React from 'react';
+import Sidebar from './Sidebar';
 import Header from '../common/Header';
 import MisPedidos from './MisPedidos';
 import MisProductos from './MisProductos';
 import HistorialPedidos from './HistorialPedidos';
 import ConfigComercio from './ConfigComercio';
-import ClientView from '../client/ClientView';
 
-const ComercioView = ({ user, currentView, handleComercioView }) => {
+const ComercioView = ({ user, currentView, handleComercioView, monedas, selectedMoneda, handleMoneda }) => {
 
     const renderView = () => {
         switch (currentView) {
-            case 'Comprar':
-                return <ClientView user={user} userComercio={'userComercio'}/>;
             case 'HistorialPedidos':
                 return <HistorialPedidos user={user} />;
             case 'Config':
@@ -25,8 +23,15 @@ const ComercioView = ({ user, currentView, handleComercioView }) => {
 
     return (
         <div className='container mt-4'>
-            <Header user={user} handleComercioView={handleComercioView} />
-            {renderView()}
+            <Header user={user} handleComercioView={handleComercioView} monedas={monedas} selectedMoneda={selectedMoneda} handleMoneda={handleMoneda}/>
+            <div className="row">
+                <div className="col-md-2">
+                    <Sidebar currentView={currentView} handleComercioView={handleComercioView} />
+                </div>
+                <div className="col-md-10">
+                    {renderView()}
+                </div>
+            </div>
         </div>
     );
 };

@@ -6,8 +6,10 @@ import { Modal } from 'react-bootstrap';
 import ComercioForm from './ComercioForm';
 import supabase from '../../supabase/supabase.config';
 import Header from '../common/Header';
+import { useCoin } from '../../context/CoinContext';
 
 const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
+    const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -15,6 +17,9 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     const [filteredComercios, setFilteredComercios] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
     const [showForm, setShowForm] = useState(false);
+
+    console.log('allcoins:  ', allCoin);
+
 
     useEffect(() => {
         async function fetchData() {
@@ -101,6 +106,16 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;
 
+    const convertirPrecios = (productos) => {
+        return productos.map(producto => {
+            const moneda = allCoin ? allCoin.find(coin => coin.id === currency.name) : null;
+            const precioConvertido = moneda ? producto.precio * moneda.current_price : producto.precio;
+            return { ...producto, precio: precioConvertido };
+        });
+    };
+
+    const productosConvertidos = convertirPrecios(productos);
+
     return (
         <div className="container mt-5">
             <Header user={user} selectedLocation={selectedLocation} handleSelectLocation={handleSelectLocation} />
@@ -120,7 +135,7 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                         setCategoriaSeleccionada={handleCategoriaSelect}
                     />
                     <Carrito
-                        productos={productos}
+                        productos={productosConvertidos}
                         comercios={comercios}
                         selectedLocation={selectedLocation}
                         incrementarCantidad={incrementarCantidad}
@@ -134,6 +149,7 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                     <Acordion
                         comercios={comerciosFiltrados}
                         productos={productos}
+                        setProductos={setProductos}
                         incrementarCantidad={incrementarCantidad}
                         decrementarCantidad={decrementarCantidad}
                     />

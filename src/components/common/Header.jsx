@@ -3,12 +3,14 @@ import { Navbar, Nav, Button, Dropdown, Container } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import UserLocationForm from './UserLocationForm';
 import supabase from '../../supabase/supabase.config';
-import { BsPersonFill } from "react-icons/bs";
+import { useCoin } from '../../context/CoinContext';
 
-const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioView, actualCurrency }) => {
+const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioView }) => {
     const [userLocations, setUserLocations] = useState([]);
     const [showLocationForm, setShowLocationForm] = useState(false);
     const { signInWithGoogle, signOut } = useAuth();
+    const { allCoin, currency, setCurrency } = useCoin();
+
 
     useEffect(() => {
         const fetchUserLocations = async () => {
@@ -91,7 +93,7 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                             <Nav className="align-items-center">
                                 {user?.user_data?.user_type === 'cliente' && userLocations.length > 0 ? (
-                                    <Dropdown>
+                                    <Dropdown className='ms-2'>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             {selectedLocation ? selectedLocation.address : 'Selecciona una ubicación'}
                                         </Dropdown.Toggle>
@@ -114,25 +116,23 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                                     </Button>
                                 ) : null}
                             </Nav>
-                            <Dropdown className="ml-3">
+                            <Dropdown className='ms-2'>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                    <BsPersonFill />
+                                    {currency.name}
                                 </Dropdown.Toggle>
-                                {user.user_data.user_type === 'comercio' ? (
-                                    <Dropdown.Menu> 
-                                        <Dropdown.Item onClick={() => handleComercioView('Comprar')} href="#Comprar">Comprar</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleComercioView('MisPedidos')} href="#MisPedidos">Mis Pedidos</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleComercioView('HistorialPedidos')} href="#HistorialPedidos">Historial de pedidos</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleComercioView('Config')} href="#Config">Configuración del comercio</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleComercioView('Products')} href="#Products">Mis Productos</Dropdown.Item>
-                                        <Dropdown.Item onClick={signOut}>Cerrar sesión</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                ) : (
-                                    <Dropdown.Menu> 
-                                        <Dropdown.Item onClick={signOut}>Cerrar sesión</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                )}
+                                <Dropdown.Menu>
+                                    {Array.isArray(allCoin) && allCoin.length > 0 ? (
+                                        allCoin.map((coin) => (
+                                            <Dropdown.Item key={coin.id} onClick={() => setCurrency(coin)}>
+                                                {coin.name}
+                                            </Dropdown.Item>
+                                        ))
+                                    ) : (
+                                        <Dropdown.Item disabled>No hay monedas disponibles</Dropdown.Item>
+                                    )}
+                                </Dropdown.Menu>
                             </Dropdown>
+                            <button className="btn btn-danger ms-2" onClick={signOut}>Cerrar sesión</button>
                         </Navbar.Collapse>
                     )}
                 </Container>

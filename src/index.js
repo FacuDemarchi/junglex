@@ -7,13 +7,16 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { AuthProvider } from './context/AuthContext';
+import CoinContextProvider from './context/CoinContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <CoinContextProvider>
+        <App />
+      </CoinContextProvider>
     </AuthProvider>
   </React.StrictMode>
 );
