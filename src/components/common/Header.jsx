@@ -9,8 +9,14 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
     const [userLocations, setUserLocations] = useState([]);
     const [showLocationForm, setShowLocationForm] = useState(false);
     const { signInWithGoogle, signOut } = useAuth();
-    const { allCoin, currency, setCurrency } = useCoin();
+    const { allCoin = [], currency, setCurrency } = useCoin();
+    const [searchTerm, setSearchTerm] = useState('');
 
+    const filteredCoins = allCoin.filter(coin =>
+        coin.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     useEffect(() => {
         const fetchUserLocations = async () => {
@@ -118,12 +124,21 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                             </Nav>
                             <Dropdown className='ms-2'>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                    <img src={currency.image} alt={currency.name} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
                                     {currency.name}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    {Array.isArray(allCoin) && allCoin.length > 0 ? (
-                                        allCoin.map((coin) => (
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar moneda..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{ margin: '10px', padding: '5px', width: '90%' }}
+                                    />
+                                    {Array.isArray(filteredCoins) && filteredCoins.length > 0 ? (
+                                        filteredCoins.map((coin) => (
                                             <Dropdown.Item key={coin.id} onClick={() => setCurrency(coin)}>
+                                                <img src={coin.image} alt={coin.name} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
                                                 {coin.name}
                                             </Dropdown.Item>
                                         ))
