@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Table } from 'react-bootstrap';
 import supabase from '../../supabase/supabase.config';
+import { useCoin } from '../../context/CoinContext';
+import AllCoinDropdown from '../common/AllCoinDropdown';
 
 const MisProductos = ({ user }) => {
     const [productos, setProductos] = useState([]);
     const [editableProductoId, setEditableProductoId] = useState(null);
     const [tags, setTags] = useState([]); // Tags globales disponibles
+    const { currency } = useCoin();
 
     useEffect(() => {
         if (user) {
@@ -23,7 +26,7 @@ const MisProductos = ({ user }) => {
                 } else {
                     setProductos(data);
                 }
-                console.log('productos: ', data);
+                // console.log('productos: ', data);
             }
             fetchProductos();
         }
@@ -42,12 +45,34 @@ const MisProductos = ({ user }) => {
         fetchTags();
     }, []);
 
-    const handleChange = (e, id) => {
+    // Función para actualizar los precios de los productos (solo para visualización de los productos en otra moneda)
+    const actualizarPrecios = (newCoin) => {
+        console.log('productos a actualizar precios: ', productos);
+        console.log('moneda por la que cambiar los precios: ', newCoin);
+        if (productos.length > 0 && productos[0].precio !== undefined && newCoin.current_price !== 0) {
+            setProductos(prevProductos => 
+                prevProductos.map(producto => ({
+                    ...producto,
+                    precio: producto.precio / newCoin.current_price
+                }))
+            );
+        } else {
+            console.log('No hay productos disponibles, el precio no está definido o currency.current_price es cero.');
+        }
+    };
+
+    const handleChange = async (e, id) => {
         const { name, value, type, checked } = e.target;
         setProductos((prevProductos) =>
-            prevProductos.map((producto) =>
-                producto.id === id ? { ...producto, [name]: type === 'checkbox' ? checked : value } : producto
-            )
+            prevProductos.map((producto) => {
+                if (producto.id === id) {
+                    const updatedProducto = { ...producto, [name]: type === 'checkbox' ? checked : value };
+                    // Guardar cambios automáticamente en Supabase
+                    handleSave(id, updatedProducto);
+                    return updatedProducto;
+                }
+                return producto;
+            })
         );
     };
 
@@ -67,8 +92,7 @@ const MisProductos = ({ user }) => {
         );
     };
 
-    const handleSave = async (id) => {
-        const producto = productos.find((producto) => producto.id === id);
+    const handleSave = async (id, producto) => {
         if (id === null) {
             // Crear nuevo producto
             const { data, error } = await supabase
@@ -78,7 +102,8 @@ const MisProductos = ({ user }) => {
                     description: producto.description,
                     precio: producto.precio,
                     disponible: producto.disponible,
-                    comercio_id: user.id
+                    comercio_id: user.id,
+                    symbol: currency.symbol
                 }]);
 
             if (error) {
@@ -100,7 +125,8 @@ const MisProductos = ({ user }) => {
                     nombre: producto.nombre,
                     description: producto.description,
                     precio: producto.precio,
-                    disponible: producto.disponible
+                    disponible: producto.disponible,
+                    symbol: currency.symbol
                 })
                 .eq('id', id);
 
@@ -113,7 +139,7 @@ const MisProductos = ({ user }) => {
                     .delete() // Eliminar los tags actuales del producto
                     .eq('producto', id);
 
-                const tagsToInsert = producto.tagsProductoSeleccionados.map((tagId) => ({
+                const tagsToInsert = (producto.tagsProductoSeleccionados || []).map((tagId) => ({
                     producto: id,
                     tag: tagId
                 }));
@@ -122,14 +148,9 @@ const MisProductos = ({ user }) => {
                     .from('tags_producto')
                     .insert(tagsToInsert);
 
-                alert('Producto actualizado exitosamente');
                 setEditableProductoId(null);
             }
         }
-    };
-
-    const handleEdit = (id) => {
-        setEditableProductoId(id);
     };
 
     const handleCancel = () => {
@@ -158,10 +179,11 @@ const MisProductos = ({ user }) => {
             <Table striped bordered hover className="mt-4">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Nombre</th>
                         <th>Description</th>
-                        <th>Precio</th>
+                        <th>
+                            <AllCoinDropdown onCurrencyChange={(coin) => actualizarPrecios(coin)} />
+                        </th>
                         <th>Disponible</th>
                         <th>Tags</th> 
                     </tr>
@@ -196,11 +218,13 @@ const MisProductos = ({ user }) => {
                                         />
                                     </td>
                                     <td>
+                                        <span>{currency.symbol}</span>
                                         <Form.Control
                                             type="number"
                                             name="precio"
                                             value={producto.precio}
                                             onChange={(e) => handleChange(e, producto.id)}
+                                            style={{ display: 'inline-block', width: 'auto' }}
                                         />
                                     </td>
                                     <td>
@@ -226,17 +250,49 @@ const MisProductos = ({ user }) => {
                             ) : (
                                 <>
                                     <td>
-                                        <Button variant="secondary" onClick={() => handleEdit(producto.id)}>
-                                            Editar
-                                        </Button>
+                                        <Form.Control
+                                            type="text"
+                                            name="nombre"
+                                            value={producto.nombre}
+                                            onChange={(e) => handleChange(e, producto.id)}
+                                        />
                                     </td>
-                                    <td>{producto.nombre}</td>
-                                    <td>{producto.description}</td>
-                                    <td>{producto.precio}</td>
-                                    <td>{producto.disponible ? 'Sí' : 'No'}</td>
                                     <td>
-                                        {/* Mostrar los tags asociados al producto */}
-                                        {producto.tags_producto.map(tagProducto => tagProducto.tags.nombre).join(', ')}
+                                        <Form.Control
+                                            type="text"
+                                            name="description"
+                                            value={producto.description}
+                                            onChange={(e) => handleChange(e, producto.id)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <span>{currency.symbol}</span>
+                                        <Form.Control
+                                            type="number"
+                                            name="precio"
+                                            value={producto.precio}
+                                            onChange={(e) => handleChange(e, producto.id)}
+                                            style={{ display: 'inline-block', width: 'auto' }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <Form.Check
+                                            type="checkbox"
+                                            name="disponible"
+                                            checked={producto.disponible}
+                                            onChange={(e) => handleChange(e, producto.id)}
+                                        />
+                                    </td>
+                                    <td>
+                                        {tags.map((tag) => (
+                                            <Form.Check 
+                                                key={tag.id}
+                                                type="checkbox"
+                                                label={tag.nombre}
+                                                checked={producto.tagsProductoSeleccionados?.includes(tag.id) || producto.tags_producto.some(tagProd => tagProd.tags.id === tag.id)}
+                                                onChange={() => handleTagCheckboxChange(producto.id, tag.id)}
+                                            />
+                                        ))}
                                     </td>
                                 </>
                             )}

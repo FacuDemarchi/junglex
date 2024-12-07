@@ -56,6 +56,12 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
         fetchData();
     }, []);
 
+    useEffect(()=>{
+        const updateProductosPrices = ()=>{}
+
+        updateProductosPrices();
+    },[currency]);
+
     const incrementarCantidad = (productoId) => {
         const updatedProductos = productos.map(producto =>
             producto.id === productoId ? { ...producto, cantidad: producto.cantidad + 1 } : producto
