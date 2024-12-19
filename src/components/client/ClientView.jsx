@@ -8,7 +8,7 @@ import supabase from '../../supabase/supabase.config';
 import Header from '../common/Header';
 import { useCoin } from '../../context/CoinContext';
 
-const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
+const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
     const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
@@ -17,8 +17,6 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     const [filteredComercios, setFilteredComercios] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
     const [showForm, setShowForm] = useState(false);
-
-    console.log('allcoins:  ', allCoin);
 
 
     useEffect(() => {

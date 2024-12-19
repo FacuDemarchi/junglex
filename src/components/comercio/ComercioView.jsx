@@ -6,7 +6,7 @@ import MisProductos from './MisProductos';
 import HistorialPedidos from './HistorialPedidos';
 import ConfigComercio from './ConfigComercio';
 
-const ComercioView = ({ user, currentView, handleComercioView, monedas, selectedMoneda, handleMoneda }) => {
+const ComercioView = ({ user, currentView, handleComercioView}) => {
 
     const renderView = () => {
         switch (currentView) {
@@ -23,7 +23,7 @@ const ComercioView = ({ user, currentView, handleComercioView, monedas, selected
 
     return (
         <div className='container mt-4'>
-            <Header user={user} handleComercioView={handleComercioView} monedas={monedas} selectedMoneda={selectedMoneda} handleMoneda={handleMoneda}/>
+            <Header user={user} handleComercioView={handleComercioView} />
             <div className="row">
                 <div className="col-md-2">
                     <Sidebar currentView={currentView} handleComercioView={handleComercioView} />

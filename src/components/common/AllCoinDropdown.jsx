@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useCoin } from "../../context/CoinContext";
 
-const AllCoinDropdown = ({ onCurrencyChange }) => {
+const AllCoinDropdown = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const { currency, setCurrency, allCoin } = useCoin();
 
@@ -31,7 +31,6 @@ const AllCoinDropdown = ({ onCurrencyChange }) => {
                 {filteredCoins.length ? (
                     filteredCoins.map(coin => (
                         <Dropdown.Item key={coin.id} onClick={() => {
-                            onCurrencyChange(coin);
                             setCurrency({
                                 id: coin.id,
                                 name: coin.name,
