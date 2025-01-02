@@ -86,19 +86,20 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
                             key={producto.id}
                             className="list-group-item d-flex justify-content-between align-items-center"
                         >
-                            <div>
-                                <h5 className="mb-1">{producto.nombre}</h5>
-                                <p className="mb-1">Cantidad: {producto.cantidad}</p>
-                                <p className="mb-1">Comercio: {getNombreComercio(producto.comercio_id)}</p>
+                            <div className="col-info">
+                                <h5 className="mb-1">{getNombreComercio(producto.comercio_id)}</h5>
+                                <p className="mb-1">{producto.nombre} ${producto.precio.toFixed(2)}</p>
+                            </div>
+                            <div className="col-cantidad text-end">
                                 <CantidadControl
                                     cantidad={producto.cantidad}
                                     onIncrementar={() => incrementarCantidad(producto.id)}
                                     onDecrementar={() => decrementarCantidad(producto.id)}
                                 />
+                                <span className="badge bg-primary rounded-pill mt-2">
+                                    ${(producto.precio * producto.cantidad).toFixed(2)}
+                                </span>
                             </div>
-                            <span className="badge bg-primary rounded-pill">
-                                ${(producto.precio * producto.cantidad).toFixed(2)}
-                            </span>
                         </div>
                     ))}
                     <div className="list-group-item d-flex justify-content-between align-items-center">
