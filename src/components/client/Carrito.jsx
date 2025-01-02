@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CantidadControl from './CantidadControl';
 import supabase from '../../supabase/supabase.config';
 import CryptoPayment from './CryptoPayment';
+import './styles/Carrito.css'
 
 const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, decrementarCantidad, user, resetCantidades }) => {
     const [productosEnCarrito, setProductosEnCarrito] = useState([]);
@@ -25,7 +26,7 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
             alert('Por favor, asegúrate de estar logueado y de seleccionar una ubicación.');
             return;
         }
-        
+
         try {
             const productosEnCarrito = productos.filter(producto => producto.cantidad > 0);
             const comerciosEnCarrito = [...new Set(productosEnCarrito.map(producto => producto.comercio_id))];
@@ -70,10 +71,8 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
         }
     };
 
-    console.log('selectedLocation: ', selectedLocation);
-
     // Obtener el comercio del primer producto en el carrito
-    const comercioActual = productosEnCarrito.length > 0 
+    const comercioActual = productosEnCarrito.length > 0
         ? comercios.find(c => c.id === productosEnCarrito[0].comercio_id)
         : null;
 
@@ -83,7 +82,10 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
             {productosEnCarrito.length > 0 ? (
                 <div className="list-group">
                     {productosEnCarrito.map(producto => (
-                        <div key={producto.id} className="list-group-item d-flex justify-content-between align-items-center">
+                        <div
+                            key={producto.id}
+                            className="list-group-item d-flex justify-content-between align-items-center"
+                        >
                             <div>
                                 <h5 className="mb-1">{producto.nombre}</h5>
                                 <p className="mb-1">Cantidad: {producto.cantidad}</p>
@@ -106,10 +108,10 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
                         </span>
                     </div>
                     <div className="d-flex justify-content-between mt-3">
-                        <CryptoPayment 
-                            actualCurrency={actualCurrency} 
+                        <CryptoPayment
+                            actualCurrency={actualCurrency}
                             totalCompraRedondeado={totalCompraRedondeado}
-                            comercio={comercioActual} // Pasamos el comercio completo
+                            comercio={comercioActual}
                         />
                         <button
                             className="btn btn-primary"
