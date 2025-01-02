@@ -1,0 +1,83 @@
+/* Contenedor principal del encabezado del comercio */
+.comercio-header-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.comercio-header-container:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor interno del encabezado */
+.comercio-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Estilo para el logo del comercio */
+.comercio-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+/* Información del comercio */
+.comercio-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comercio-info h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.comercio-info p {
+    font-size: 0.9rem;
+    margin: 2px 0;
+    color: #666;
+}
+
+/* Botón del acordeón */
+.accordion-button.comercio-button {
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.accordion-button.comercio-button:hover {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* Estilo para el cuerpo del acordeón */
+.accordion-body {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para cuando el botón está activo */
+.accordion-button.comercio-button.active {
+    background-color: #e9ecef;
+    box-shadow: none;
+}

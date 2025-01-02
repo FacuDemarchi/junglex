@@ -26,7 +26,7 @@ const App = () => {
                     <ClientView 
                         user={user} 
                         selectedLocation={selectedLocation} 
-                        handleSelectLocation={handleSelectLocation} 
+                        handleSelectLocation={handleSelectLocation}
                     />
                 ) : userType === 'comercio' ? (
                     <ComercioView 

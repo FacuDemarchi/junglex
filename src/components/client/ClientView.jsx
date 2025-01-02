@@ -8,7 +8,7 @@ import supabase from '../../supabase/supabase.config';
 import Header from '../common/Header';
 import { useCoin } from '../../context/CoinContext';
 
-const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
+const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
@@ -18,47 +18,56 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
     const [selectedTag, setSelectedTag] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
-
     useEffect(() => {
         async function fetchData() {
-            const { data: comerciosData, error: comerciosError } = await supabase
-                .from('comercios')
-                .select(`*, categorias(*)`);
+            try {
+                // Consulta a Supabase para traer comercios y productos
+                const { data: comerciosData, error: comerciosError } = await supabase
+                    .from('comercios')
+                    .select(`*, categorias(*), productos(*, tags_producto(*, tags(nombre)))`);
 
-            if (comerciosError) {
-                console.error('Error al obtener comercios:', comerciosError);
-                return;
+                if (comerciosError) throw comerciosError;
+
+                // Agregar la propiedad cantidad a cada producto
+                const comerciosConProductos = comerciosData.map(comercio => ({
+                    ...comercio,
+                    productos: comercio.productos.map(producto => ({
+                        ...producto,
+                        cantidad: 0, // Inicializamos la cantidad en 0
+                    })),
+                }));
+
+                setComercios(comerciosConProductos);
+
+                // Extraer todos los productos para manipulación independiente
+                const todosLosProductos = comerciosConProductos.flatMap(comercio => comercio.productos);
+                setProductos(todosLosProductos);
+
+                // Extraer categorías únicas
+                const categoriasUnicas = [...new Set(comerciosData.map(comercio => comercio.categorias?.nombre))];
+                setCategorias(categoriasUnicas?.filter(Boolean)); // Filtrar valores válidos
+            } catch (error) {
+                console.error('Error al obtener datos:', error);
             }
-
-            setComercios(comerciosData);
-
-            const { data: productosData, error: productosError } = await supabase
-                .from('productos')
-                .select(`*, tags(*)`);
-
-            if (productosError) {
-                console.error('Error al obtener productos:', productosError);
-                return;
-            }
-
-            const productosConCantidad = productosData.map(producto => ({
-                ...producto,
-                cantidad: 0
-            }));
-            setProductos(productosConCantidad);
-
-            const categoriasUnicas = [...new Set(comerciosData.map(comercio => comercio.categorias?.nombre))];
-            setCategorias(categoriasUnicas);
         }
 
         fetchData();
     }, []);
 
-    useEffect(()=>{
-        const updateProductosPrices = ()=>{}
+    useEffect(() => {
+        const updateProductosPrices = () => {
+            const moneda = allCoin?.find(coin => coin.id === currency.name);
+            if (moneda) {
+                const productosActualizados = productos.map(producto => ({
+                    ...producto,
+                    precioConvertido: producto.precio * moneda.current_price,
+                }));
+                setProductos(productosActualizados);
+            }
+        };
 
         updateProductosPrices();
-    },[currency]);
+    }, [currency, allCoin, productos]);
 
     const incrementarCantidad = (productoId) => {
         const updatedProductos = productos.map(producto =>
@@ -77,7 +86,7 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
     const resetCantidades = () => {
         const productosReseteados = productos.map(producto => ({
             ...producto,
-            cantidad: 0
+            cantidad: 0,
         }));
         setProductos(productosReseteados);
     };
@@ -85,40 +94,31 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
     const handleTagSelect = (tag) => {
         setSelectedTag(tag);
         if (tag) {
-            const filtered = comercios.filter(comercio =>
-                productos.some(producto =>
-                    producto.comercio_id === comercio.id && producto.tag && producto.tag.includes(tag) 
+            const filtered = comercios?.filter(comercio =>
+                comercio.productos.some(producto =>
+                    producto.tags_producto.some(t => t.tags.nombre === tag)
                 )
             );
             setFilteredComercios(filtered);
         } else {
             setFilteredComercios([]);
         }
-    };    
+    };
 
     const handleClearFilters = () => {
         setFilteredComercios([]);
         setSelectedTag(null);
-        setCategoriaSeleccionada(null); 
+        setCategoriaSeleccionada(null);
     };
 
     const handleCategoriaSelect = (categoria) => {
         setCategoriaSeleccionada(categoria);
-        setFilteredComercios([]);
-        handleTagSelect(null); 
+        const filtered = comercios?.filter(comercio => comercio.categorias?.nombre === categoria);
+        setFilteredComercios(filtered);
+        handleTagSelect(null);
     };
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;
-
-    const convertirPrecios = (productos) => {
-        return productos.map(producto => {
-            const moneda = allCoin ? allCoin.find(coin => coin.id === currency.name) : null;
-            const precioConvertido = moneda ? producto.precio * moneda.current_price : producto.precio;
-            return { ...producto, precio: precioConvertido };
-        });
-    };
-
-    const productosConvertidos = convertirPrecios(productos);
 
     return (
         <div className="container mt-5">
@@ -139,7 +139,7 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
                         setCategoriaSeleccionada={handleCategoriaSelect}
                     />
                     <Carrito
-                        productos={productosConvertidos}
+                        productos={productos}
                         comercios={comercios}
                         selectedLocation={selectedLocation}
                         incrementarCantidad={incrementarCantidad}
@@ -149,17 +149,26 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation  }) => {
                     />
                 </div>
                 <div className="col-md-9">
-                    {/*<TagFiltroCarousel productos={productos} selectedTag={selectedTag} onTagSelect={handleTagSelect} />*/}
+                    {/* <TagFiltroCarousel productos={productos} selectedTag={selectedTag} onTagSelect={handleTagSelect} /> */}
                     <Acordion
                         comercios={comerciosFiltrados}
                         productos={productos}
-                        setProductos={setProductos}
                         incrementarCantidad={incrementarCantidad}
                         decrementarCantidad={decrementarCantidad}
                     />
                 </div>
             </div>
-            <footer style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: 'white', padding: '10px', zIndex: 1000 }}>
+            <footer
+                style={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'white',
+                    padding: '10px',
+                    zIndex: 1000,
+                }}
+            >
                 <div className="d-flex justify-content-start" style={{ paddingLeft: '10px' }}>
                     <button className="btn btn-primary" onClick={() => setShowForm(true)}>
                         Registrar mi comercio

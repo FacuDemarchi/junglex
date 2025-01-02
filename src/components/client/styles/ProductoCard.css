@@ -1,0 +1,68 @@
+/* Contenedor principal para organizar las tarjetas */
+.producto-grid {
+    display: flex;
+    flex-wrap: wrap; /* Permite que las tarjetas bajen a una nueva fila si no caben */
+    gap: 16px; /* Espacio consistente entre las tarjetas */
+    justify-content: flex-start; /* Alinea las tarjetas hacia la izquierda */
+}
+
+/* Estilo de cada tarjeta */
+.producto-card {
+    width: 200px; /* Ancho fijo para cada tarjeta */
+    padding: 12px; /* Espaciado interno */
+    border: 1px solid #ddd; /* Borde gris claro */
+    border-radius: 6px; /* Bordes ligeramente redondeados */
+    background-color: #fff; /* Fondo blanco */
+    box-sizing: border-box; /* Incluye padding y borde en el cálculo del ancho */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Suaviza animaciones */
+}
+
+/* Quitar el efecto hover */
+.producto-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Estilo del título del producto */
+.producto-nombre {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+/* Estilo del precio */
+.producto-precio {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0 0 4px 0;
+}
+
+/* Estilo de la descripción */
+.producto-descripcion {
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+/* Estilo de los controles */
+.producto-controles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .producto-card {
+        width: 160px; /* Reduce el ancho en pantallas medianas */
+    }
+}
+
+@media (max-width: 480px) {
+    .producto-card {
+        width: 100%; /* En pantallas pequeñas, las tarjetas ocupan todo el ancho */
+    }
+}
