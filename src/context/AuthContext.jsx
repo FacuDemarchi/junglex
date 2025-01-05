@@ -22,8 +22,10 @@ export const AuthProvider = ({ children }) => {
         if (data && data.length > 0) {
           const userWithPhone = { ...user, user_data: data[0] };
           setUser(userWithPhone);
+          localStorage.setItem('user', JSON.stringify(userWithPhone));
         } else {
-          setUser(user); 
+          setUser(user);
+          localStorage.setItem('user', JSON.stringify(user));
         }
       } catch (error) {
         console.error('Error in fetchUserData:', error);
@@ -31,6 +33,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     const fetchSession = async () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+        return;
+      }
+
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
@@ -45,17 +53,19 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    fetchSession(); 
+    fetchSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
       if (session?.user) {
-        fetchUserData(session.user); 
+        fetchUserData(session.user);
+      } else {
+        setUser(null);
+        localStorage.removeItem('user');
       }
     });
 
     return () => {
-      authListener?.subscription.unsubscribe(); 
+      authListener?.subscription.unsubscribe();
     };
   }, []);
 

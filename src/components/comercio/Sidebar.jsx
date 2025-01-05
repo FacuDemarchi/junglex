@@ -3,9 +3,8 @@ import React from 'react';
 const Sidebar = ({ currentView, handleComercioView }) => {
     const views = [
         { name: 'Mis Pedidos', value: 'MisPedidos' },
-        { name: 'Historial de Pedidos', value: 'HistorialPedidos' },
+        { name: 'Historial', value: 'HistorialPedidos' },
         { name: 'Configuración', value: 'Config' },
-        { name: 'Mis Productos', value: 'Products' },
     ];
 
     return (

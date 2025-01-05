@@ -2,7 +2,6 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import Header from '../common/Header';
 import MisPedidos from './MisPedidos';
-import MisProductos from './MisProductos';
 import HistorialPedidos from './HistorialPedidos';
 import ConfigComercio from './ConfigComercio';
 
@@ -14,8 +13,6 @@ const ComercioView = ({ user, currentView, handleComercioView}) => {
                 return <HistorialPedidos user={user} />;
             case 'Config':
                 return <ConfigComercio user={user} />;
-            case 'Products':
-                return <MisProductos user={user} />;
             default:
                 return <MisPedidos user={user} />;
         }

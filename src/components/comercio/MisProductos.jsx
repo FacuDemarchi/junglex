@@ -137,7 +137,6 @@ const MisProductos = ({ user }) => {
 
     return (
         <div>
-            <h2>Mis Productos</h2>
             <Table striped bordered hover className="mt-4">
                 <thead>
                     <tr>

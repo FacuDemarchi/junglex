@@ -67,10 +67,10 @@ const PedidoCardRecibido = ({ pedido, onAceptar, onRechazar }) => {
             </div>
             <div className="d-flex justify-content-between mt-3">
                 <button className="btn btn-danger" onClick={() => onRechazar(pedido.id)}>
-                    Rechazar Pedido
+                    Rechazar
                 </button>
                 <button className="btn btn-success" onClick={() => onAceptar(pedido.id)}>
-                    Aceptar Pedido
+                    Aceptar
                 </button>
                 <a 
                     href={`https://wa.me/${phone}`} 

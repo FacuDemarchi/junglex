@@ -56,24 +56,113 @@ const MisPedidos = ({ user }) => {
     }, [user]);
 
     const onAceptar = async (pedidoId) => {
-        // Maneja la aceptación de un pedido
+        try {
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'aceptado' })
+                .eq('id', pedidoId);
+    
+            if (error) {
+                console.error('Error al aceptar el pedido:', error);
+                setError('No se pudo aceptar el pedido.');
+                return;
+            }
+    
+            // Actualizar el estado localmente
+            setPedidosPendientes(pedidosPendientes.filter(pedido => pedido.id !== pedidoId));
+            const pedidoAceptado = pedidosPendientes.find(pedido => pedido.id === pedidoId);
+            setPedidosAceptados([...pedidosAceptados, { ...pedidoAceptado, estado: 'aceptado' }]);
+        } catch (err) {
+            console.error('Error al aceptar el pedido:', err);
+            setError('Error inesperado al aceptar el pedido.');
+        }
     };
-
+    
     const onRechazar = async (pedidoId) => {
-        // Maneja el rechazo de un pedido
+        try {
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'rechazado' })
+                .eq('id', pedidoId);
+    
+            if (error) {
+                console.error('Error al rechazar el pedido:', error);
+                setError('No se pudo rechazar el pedido.');
+                return;
+            }
+    
+            // Actualizar el estado localmente
+            setPedidosPendientes(pedidosPendientes.filter(pedido => pedido.id !== pedidoId));
+        } catch (err) {
+            console.error('Error al rechazar el pedido:', err);
+            setError('Error inesperado al rechazar el pedido.');
+        }
     };
-
+    
     const onCancelar = async (pedidoId) => {
-        // Maneja la cancelación de un pedido
+        try {
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'cancelado' })
+                .eq('id', pedidoId);
+    
+            if (error) {
+                console.error('Error al cancelar el pedido:', error);
+                setError('No se pudo cancelar el pedido.');
+                return;
+            }
+    
+            // Actualizar el estado localmente
+            setPedidosAceptados(pedidosAceptados.filter(pedido => pedido.id !== pedidoId));
+        } catch (err) {
+            console.error('Error al cancelar el pedido:', err);
+            setError('Error inesperado al cancelar el pedido.');
+        }
     };
-
+    
     const onListo = async (pedidoId) => {
-        // Maneja el cambio de estado a "listo"
+        try {
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'listo' })
+                .eq('id', pedidoId);
+    
+            if (error) {
+                console.error('Error al marcar como listo:', error);
+                setError('No se pudo marcar el pedido como listo.');
+                return;
+            }
+    
+            // Actualizar el estado localmente
+            setPedidosAceptados(pedidosAceptados.filter(pedido => pedido.id !== pedidoId));
+            const pedidoListo = pedidosAceptados.find(pedido => pedido.id === pedidoId);
+            setPedidosListos([...pedidosListos, { ...pedidoListo, estado: 'listo' }]);
+        } catch (err) {
+            console.error('Error al marcar como listo:', err);
+            setError('Error inesperado al marcar como listo.');
+        }
     };
-
+    
     const onEnviado = async (pedidoId) => {
-        // Maneja el cambio de estado a "enviado"
-    };
+        try {
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'enviado' })
+                .eq('id', pedidoId);
+    
+            if (error) {
+                console.error('Error al marcar como enviado:', error);
+                setError('No se pudo marcar el pedido como enviado.');
+                return;
+            }
+    
+            // Actualizar el estado localmente
+            setPedidosListos(pedidosListos.filter(pedido => pedido.id !== pedidoId));
+        } catch (err) {
+            console.error('Error al marcar como enviado:', err);
+            setError('Error inesperado al marcar como enviado.');
+        }
+    };    
 
     if (loading) return <p>Cargando pedidos...</p>;
     if (error) return <p>{error}</p>;

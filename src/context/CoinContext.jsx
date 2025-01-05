@@ -28,7 +28,6 @@ const CoinContextProvider = ({ children }) => {
 
                 if (Array.isArray(data)) {
                     // Agregar ARS al principio de la lista
-                    
                     setAllCoin([currency, ...data]); // Agrega ARS y luego las demás monedas
                 }
             } catch (error) {
@@ -36,7 +35,7 @@ const CoinContextProvider = ({ children }) => {
             }
         };
         fetchAllCoins();
-    }, []);
+    }, [currency]);
 
     const contextValue = {
         allCoin,

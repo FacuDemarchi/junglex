@@ -1,0 +1,97 @@
+/* Card principal */
+.comercio-card-container {
+    position: relative;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex; /* Flexbox para organizar los elementos internos */
+    align-items: center;
+    gap: 10px; /* Espaciado entre elementos */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    height: 100%; /* Ocupa todo el alto del contenedor */
+    box-sizing: border-box; /* Incluye padding y bordes en el cálculo del tamaño */
+    flex-grow: 1; /* Permite que crezca dentro de un contenedor flexible */
+}
+
+/* Botón de edición flotante */
+.edit-button {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Contenedor del encabezado del comercio */
+.comercio-header-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaciado entre el logo y la información */
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+/* Logo del comercio */
+.comercio-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover; /* Asegura que la imagen se ajuste al tamaño sin distorsión */
+}
+
+/* Información del comercio */
+.comercio-info {
+    flex: 1; /* Permite que ocupe todo el espacio restante */
+    display: flex;
+    flex-direction: column; /* Organiza los campos de manera vertical */
+    justify-content: space-between; /* Espaciado uniforme entre campos */
+}
+
+/* Campos editables */
+.edit-input {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluye padding en el tamaño */
+}
+
+/* Botones de guardar/cancelar */
+.buttons-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px; /* Espaciado entre botones */
+}
+
+.icon-button {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espaciado entre el ícono y el texto */
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.icon-button.save {
+    background-color: #28a745;
+    color: white;
+}
+
+.icon-button.cancel {
+    background-color: #dc3545;
+    color: white;
+}

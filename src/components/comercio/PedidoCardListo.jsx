@@ -67,7 +67,7 @@ const PedidoCardListo = ({ pedido, onEnviado }) => {
             </div>
             <div className="d-flex justify-content-between mt-3">
                 <button className="btn btn-info" onClick={() => onEnviado(pedido.id)}>
-                    Enviar pedido
+                    Enviar
                 </button>
                 <a 
                     href={`https://wa.me/+549${phone}`} 
