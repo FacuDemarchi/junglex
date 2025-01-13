@@ -1,35 +1,51 @@
-import React from 'react'
-import Tutorials from './Tutorials'
-import Proximamente from './Proximamente'
-import AboutUs from './AboutUs'
-import SideNav from './SideNav'
-import { Container, Row, Col } from 'react-bootstrap'
-import Header from '../common/Header'
+import React from 'react';
+import { useAuth } from "../../context/AuthContext";
 
-const NoLoginView = ({ signInWithGoogle }) => {
+const NoLoginView = () => {
+  const { signInWithGoogle } = useAuth();
+
   return (
-    <div>
-      <Header signInWithGoogle={signInWithGoogle} />
-      <Container fluid>
-        <Row className="mt-4">
-          <Col md={2}>
-            <SideNav />
-          </Col>
-          <Col md={10}>
-            <section id="about" className="mb-4">
-              <AboutUs />
-            </section>
-            <section id="tutorials" className="mb-4">
-              <Tutorials />
-            </section>
-            <section id="coming-soon" className="mb-4">
-              <Proximamente />
-            </section>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  )
-}
+    <div
+      className="d-flex flex-column justify-content-center align-items-center vh-100 m-0"
+      style={{
+        backgroundColor: '#50745f',
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      {/* Logo */}
+      <div className="mb-4">
+        <img
+          src="logo.svg"
+          alt="Junglex Logo"
+          className="img-fluid"
+          style={{ maxWidth: '150px' }}
+        />
+      </div>
 
-export default NoLoginView
+      {/* Slogan */}
+      <h1 className="text-center text-white">Creando valor mediante criptomonedas</h1>
+
+      {/* Optional Call to Action */}
+      <p className="text-center mt-3 text-light">
+        Descubre cómo estamos revolucionando el comercio digital.
+      </p>
+
+      {/* Botón de inicio de sesión */}
+      <button
+        onClick={signInWithGoogle}
+        className="btn btn-light mt-4"
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '5px',
+          fontWeight: 'bold',
+        }}
+      >
+        Iniciar sesión con Google
+      </button>
+    </div>
+  );
+};
+
+export default NoLoginView;

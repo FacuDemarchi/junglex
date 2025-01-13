@@ -5,7 +5,7 @@ import ClientView from './components/client/ClientView';
 import NoLoginView from './components/noLogedIn/NoLoginView';
 
 const App = () => {
-    const { user, signInWithGoogle } = useAuth();
+    const { user } = useAuth();
     const [comercioView, setComercioView] = useState('MisPedidos');
     const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -20,7 +20,7 @@ const App = () => {
     const userType = user?.user_data ? user.user_data.user_type : null;
 
     return (
-        <div className='container'>
+        <div>
             {user ? (
                 userType === 'cliente' ? (
                     <ClientView 
@@ -35,10 +35,10 @@ const App = () => {
                         handleComercioView={handleComercioView} 
                     />
                 ) : (
-                    <NoLoginView signInWithGoogle={signInWithGoogle} />
+                    <NoLoginView/>
                 )
             ) : (
-                <NoLoginView signInWithGoogle={signInWithGoogle} />
+                <NoLoginView/>
             )}
         </div>
     );
