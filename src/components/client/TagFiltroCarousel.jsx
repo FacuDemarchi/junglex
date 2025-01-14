@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import './TagFiltroCarousel.css'; // Asegúrate de crear este archivo para los estilos
+import './styles/TagFiltroCarousel.css'; // Asegúrate de crear este archivo para los estilos
 
 const TagFiltroCarousel = ({ productos, selectedTag, onTagSelect }) => {
     const [tags, setTags] = useState([]);
