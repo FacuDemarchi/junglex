@@ -12,10 +12,17 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
     return (
         <div className="accordion" id="accordionExample">
             {comercios.map((comercio, index) => {
-                // Filtrar los productos que pertenecen al comercio actual
+                // Filtrar los productos que pertenecen al comercio actual Y están disponibles
                 const productosDelComercio = productos.filter(
-                    (producto) => producto.comercio_id === comercio.id
+                    (producto) => 
+                        producto.comercio_id === comercio.id && 
+                        producto.disponible === true
                 );
+
+                // Si no hay productos disponibles para este comercio, no lo renderices
+                if (productosDelComercio.length === 0) {
+                    return null;
+                }
 
                 return (
                     <div className="accordion-item" key={comercio.id}>

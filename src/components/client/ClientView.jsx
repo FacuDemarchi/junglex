@@ -4,11 +4,11 @@ import Carrito from './Carrito';
 import CategoriaFiltro from './CategoriaFiltro';
 import Header from '../common/Header';
 import supabase from '../../supabase/supabase.config';
-import { useCoin } from '../../context/CoinContext';
+// import { useCoin } from '../../context/CoinContext';
 import './styles/ClientView.css'; // Agregar estilos globales si es necesario
 
 const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
-    const { currency, allCoin } = useCoin();
+    // const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
     const [categoriasConTags, setCategoriasConTags] = useState([]);
@@ -108,6 +108,14 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;
 
+    const resetCantidades = () => {
+        const productosReiniciados = productos.map(producto => ({
+            ...producto,
+            cantidad: 0
+        }));
+        setProductos(productosReiniciados);
+    };
+
     return (
         <div className="container mt-5">
             <Header
@@ -128,6 +136,9 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                         comercios={comerciosFiltrados}
                         incrementarCantidad={incrementarCantidad}
                         decrementarCantidad={decrementarCantidad}
+                        selectedLocation={selectedLocation}
+                        user={user}
+                        resetCantidades={resetCantidades}
                     />
                 </div>
                 <div className="col-md-9">
