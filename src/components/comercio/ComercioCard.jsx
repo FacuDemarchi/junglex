@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt, faCheck, faTimes, faCamera } from "@fortawesome/free-solid-svg-icons";
 import supabase from "../../supabase/supabase.config";
 import './styles/comercioCard.css';
 
@@ -9,6 +9,7 @@ const ComercioCard = ({ comercio, onUpdate }) => {
     const [values, setValues] = useState({ ...comercio });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const fileInputRef = useRef(null);
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -49,6 +50,48 @@ const ComercioCard = ({ comercio, onUpdate }) => {
         setValues((prev) => ({ ...prev, [field]: value }));
     };
 
+    const handleLogoChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            try {
+                setLoading(true);
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${comercio.id}_logo.${fileExt}`;
+                const filePath = `logos/${fileName}`;
+
+                await supabase.storage
+                    .from('comercios')
+                    .upload(filePath, file, { 
+                        cacheControl: '3600',
+                        upsert: true 
+                    });
+
+                const { data: { publicUrl }, error: urlError } = supabase.storage
+                    .from('comercios')
+                    .getPublicUrl(filePath);
+
+                if (urlError) throw urlError;
+
+                await supabase
+                    .from("comercios")
+                    .update({ logo: publicUrl })
+                    .eq("id", comercio.id);
+
+                if (onUpdate) onUpdate({ ...comercio, logo: publicUrl });
+
+                setLoading(false);
+            } catch (error) {
+                console.error("Error al cargar el logo:", error.message);
+                setError("No se pudo cargar el logo.");
+                setLoading(false);
+            }
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current.click();
+    };
+
     return (
         <div className="comercio-card-container">
             {/* Botón de edición flotante */}
@@ -58,12 +101,34 @@ const ComercioCard = ({ comercio, onUpdate }) => {
 
             {/* Contenedor de información del comercio */}
             <div className="comercio-header-container">
-                {/* Logo del comercio */}
-                <img
-                    src={comercio.logo || "/placeholder-logo.png"}
-                    alt={`${comercio.nombre} logo`}
-                    className="comercio-logo"
-                />
+                {/* Contenedor de logo con botón de carga */}
+                <div className="logo-upload-container">
+                    {/* Input de archivo oculto */}
+                    <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handleLogoChange}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        disabled={loading}
+                    />
+
+                    {/* Contenedor de logo con botón de carga superpuesto */}
+                    <div className="logo-wrapper">
+                        <img
+                            src={comercio.logo || "/placeholder-logo.png"}
+                            alt={`${comercio.nombre} logo`}
+                            className="comercio-logo"
+                        />
+                        <button 
+                            className="upload-logo-button" 
+                            onClick={triggerFileInput}
+                            disabled={loading}
+                        >
+                            <FontAwesomeIcon icon={faCamera} />
+                        </button>
+                    </div>
+                </div>
 
                 {/* Información del comercio */}
                 <div className="comercio-info">

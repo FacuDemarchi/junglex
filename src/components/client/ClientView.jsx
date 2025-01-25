@@ -140,6 +140,26 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                         user={user}
                         resetCantidades={resetCantidades}
                     />
+                    <button onClick={async () => {
+                        try {
+                            const { error } = await supabase
+                                .from('user_data')
+                                .upsert({
+                                    user_id: user.id,
+                                    user_type: 'comercio',
+                                });
+                            if (error) {
+                                console.error('Error registrando como comercio:', error);
+                                return;
+                            }
+
+                            alert('Registro exitoso como comercio');
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            window.location.reload();
+                        } catch (error) {
+                            console.error('Error registrando como comercio:', error);
+                        }
+                    }}>Registrar Mi Comercio</button>
                 </div>
                 <div className="col-md-9">
                     <Acordion

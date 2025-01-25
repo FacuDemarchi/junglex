@@ -2,7 +2,7 @@ import React, {useState, useCallback} from 'react';
 import { useAuth } from './context/AuthContext';
 import ComercioView from './components/comercio/ComercioView';
 import ClientView from './components/client/ClientView';
-import NoLoginView from './components/noLogedIn/NoLoginView';
+import Index from './components/noLogedIn/Index.jsx';
 
 const App = () => {
     const { user } = useAuth();
@@ -35,10 +35,10 @@ const App = () => {
                         handleComercioView={handleComercioView} 
                     />
                 ) : (
-                    <NoLoginView/>
+                    <Index/>
                 )
             ) : (
-                <NoLoginView/>
+                <Index/>
             )}
         </div>
     );
