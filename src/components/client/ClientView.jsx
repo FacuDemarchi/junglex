@@ -148,10 +148,12 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                                     user_id: user.id,
                                     user_type: 'comercio',
                                 });
-                            if (error) {
-                                console.error('Error registrando como comercio:', error);
-                                return;
-                            }
+                            if (error) {console.error('Error al registrar al comercio en tabla user_data:', error); return;}
+                            
+                            const {errorc} = await supabase
+                                .from('comercios')
+                                .upsert({id: user.id});
+                            if (errorc) {console.log('Error al registrar el comercio en tabla comercios'); return;}
 
                             alert('Registro exitoso como comercio');
                             await new Promise(resolve => setTimeout(resolve, 2000));
