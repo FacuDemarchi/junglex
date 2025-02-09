@@ -10,7 +10,7 @@ const Index = () => {
       {/* Logo */}
       <div>
         <img
-          src="Leon.jpg"
+          src="https://afuwvuyeqclmmqbryjwr.supabase.co/storage/v1/object/public/comercios//Logo.svg"
           alt="Junglex Logo"
           className="index-logo"
         />
