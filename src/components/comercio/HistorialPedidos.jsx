@@ -25,7 +25,6 @@ const HistorialPedidos = ({ user }) => {
                     pedido_productos(cantidad, productos(precio, nombre))
                 `)
                 .eq('comercio_id', user.id)
-                .in('estado', ['enviado', 'entregado', 'cancelado']);
 
             if (error) {
                 setError('Error al intentar traer el historial de pedidos');

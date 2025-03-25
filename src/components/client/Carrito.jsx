@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CantidadControl from './CantidadControl';
 import supabase from '../../supabase/supabase.config';
-import CryptoPayment from './CryptoPayment';
 import './styles/Carrito.css'
 
 const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, decrementarCantidad, user, resetCantidades }) => {
@@ -14,7 +13,6 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
 
     const totalCompra = productosEnCarrito.reduce((total, producto) => total + producto.precio * producto.cantidad, 0);
     const totalCompraRedondeado = totalCompra.toFixed(2);
-    const actualCurrency = 'USD';
 
     const getNombreComercio = (comercioId) => {
         const comercio = comercios.find(comercio => comercio.id === comercioId);
@@ -72,9 +70,9 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
     };
 
     // Obtener el comercio del primer producto en el carrito
-    const comercioActual = productosEnCarrito.length > 0
+    /* const comercioActual = productosEnCarrito.length > 0
         ? comercios.find(c => c.id === productosEnCarrito[0].comercio_id)
-        : null;
+        : null; */
 
     return (
         <div className="carrito mt-4">
@@ -109,17 +107,12 @@ const Carrito = ({ productos, comercios, selectedLocation, incrementarCantidad, 
                         </span>
                     </div>
                     <div className="d-flex justify-content-between mt-3">
-                        <CryptoPayment
-                            actualCurrency={actualCurrency}
-                            totalCompraRedondeado={totalCompraRedondeado}
-                            comercio={comercioActual}
-                        />
                         <button
                             className="btn btn-primary"
                             onClick={onPlaceOrder}
                             disabled={!user || !selectedLocation}
                         >
-                            Cash pay
+                            Pagar en efectivo
                         </button>
                     </div>
                 </div>

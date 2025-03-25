@@ -1,70 +1,133 @@
-# Getting Started with Create React App
+# 🦍 Junglex
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🚫 **Comisiones abusivas.**  
+💸 **Ganancias que se van.**  
+🦍 **Junglex llega para romper el molde.**
 
-## Available Scripts
+Conectamos negocios gastronómicos con clientes usando **criptomonedas**, sin intermediarios, sin bancos, sin vueltas.  
+Una plataforma descentralizada, local y pensada para que el valor se quede donde tiene que estar: **en tu negocio y en tu comunidad**.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## ⚙️ Stack Tecnológico
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Supabase** → Backend y base de datos  
+- **React / Next.js** → Frontend web  
+- **Google Maps API** → Ubicación y logística  
+- **Vercel** → Hosting y despliegue continuo  
+- **Solidity** → Smart contracts (en desarrollo)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧩 Estructura del proyecto (Frontend)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+/frontend
 
-### `npm run build`
+├── public/                   # Archivos públicos (imágenes, íconos, etc.)
+├── src/
+│   ├── components/
+│   │   ├── client/
+│   │   │   ├── styles/
+│   │   │   ├── Accordion.jsx
+│   │   │   ├── CantidadControl.jsx
+│   │   │   ├── Carrito.jsx
+│   │   │   ├── CategoriaFiltro.jsx
+│   │   │   ├── ClientView.jsx
+│   │   │   ├── CryptoPayment.jsx
+│   │   │   ├── ProductoCard.jsx
+│   │   │   └── TagFiltroCarousel.jsx
+│   │   ├── comercio/
+│   │   │   ├── styles/
+│   │   │   ├── ComercioCard.jsx
+│   │   │   ├── ComercioView.jsx
+│   │   │   ├── ConfigComercio.jsx
+│   │   │   ├── ConfigComercioModal.jsx
+│   │   │   ├── DetallesModal.jsx
+│   │   │   ├── HistorialPedidos.jsx
+│   │   │   ├── MisPedidos.jsx
+│   │   │   ├── MisProductos.jsx
+│   │   │   ├── PedidoCardAceptado.jsx
+│   │   │   ├── PedidoCardListo.jsx
+│   │   │   ├── PedidoCardRecibido.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── TablaHistorialPedidos.jsx
+│   │   │   └── TagSelector.jsx
+│   │   └── common/
+│   │       ├── AllCoinDropdown.jsx
+│   │       ├── Header.jsx
+│   │       ├── UserLocationForm.css
+│   │       └── UserLocationForm.jsx
+│   ├── contracts/            # Carpeta reservada para smart contracts
+│   ├── abijson/              # ABIs de contratos inteligentes
+│   ├── noLoggedIn/
+│   │   ├── Index.jsx
+│   │   └── Index.css
+│   ├── testingFunctions/
+│   │   ├── ComerciosCercanos.jsx
+│   │   └── TestComponent.jsx
+│   ├── context/
+│   │   ├── AuthContext.js
+│   │   └── CoinContext.js
+│   ├── services/
+│   │   └── pedidoService.js
+│   ├── supabase/
+│   │   └── supabase.config.js
+│   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── index.js
+│   ├── reportWebVitals.js
+│   └── setupTests.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+.env                          # Variables de entorno  
+.gitignore                    # Archivos ignorados por Git
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 💰 Modelos de monetización
 
-### `npm run eject`
+Junglex no se financia con tu ganancia. Se apoya en modelos nuevos como:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Venta de posicionamiento en la app
+- Porcentaje de transacción con cripto (sin tarjetas)
+- Criptomonedas propias para empresas
+- Suscripción al estilo Costco para clientes
+- Venta de datos e índices de precios
+- Listado de tokens y monedas dentro de la plataforma
+- Planes para empresas de logística (único o suscripción)
+- Reporting automático de ventas para comercios
+- Junglex como intermediario entre comercio y logística
+- Índices de precios (modelo BTE)
+- Criptos respaldadas por commodities (granos, petróleo, etc.)
+- Ganancia en la diferencia de compra/venta cripto
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🚀 En qué estamos ahora
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- ✔️ Desarrollando un **MVP funcional**
+- 🔍 Validando con **clientes reales**
+- 💡 Afinando el **modelo de ingresos**
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📌 Próximos pasos
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Encuestas a clientes sobre modelos de pago  
+2. Desarrollo de smart contracts  
+3. Onboarding masivo de negocios
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📊 KPIs a seguir de cerca
 
-### Analyzing the Bundle Size
+- % de comercios que se registran  
+- % de compras pagadas con cripto  
+- Tiempo medio de entrega  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+¿Querés sumarte o saber más?  
+**Construimos el futuro de los pagos, desde abajo y con código.**
