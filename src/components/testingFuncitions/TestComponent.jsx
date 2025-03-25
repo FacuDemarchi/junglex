@@ -1,109 +1,78 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from 'react';
+import supabase from '../../supabase/supabase.config';
 import { useAuth } from '../../context/AuthContext';
-import supabase  from '../../supabase/supabase.config';
 
 const TestComponent = () => {
-    const {user} = useAuth();
-    const [imagenes, setImagenes] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
+  const { user } = useAuth();
+  const [userLocations, setUserLocations] = useState([]);
+  const [comercios, setComercios] = useState([]);
+  const [error, setError] = useState(null);
 
-    // Nueva función para manejar la carga de archivos
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setSelectedFile(file);
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchLocations = async () => {
+      const { data, error } = await supabase
+        .from('user_locations')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) setError(error.message);
+      else setUserLocations(data);
     };
 
-    // Nueva función para subir un archivo seleccionado
-    const handleFileUpload = async (e) => {
-        e.preventDefault();
-        
-        if (!selectedFile) {
-            alert('Por favor, selecciona un archivo');
-            return;
-        }
+    fetchLocations();
+  }, [user]);
 
-        try {
-            const { data, error } = await supabase
-                .storage
-                .from('comercios')
-                .upload(selectedFile.name, selectedFile, {
-                    cacheControl: '3600',
-                    upsert: true
-                });
+  const fetchComercios = async (lat, lng) => {
+    const { data, error } = await supabase.rpc('obtener_comercios_cercanos', {
+      latitud: lat,
+      longitud: lng,
+    });
 
-            if (error) {
-                console.error("Error al subir la imagen:", error);
-                alert('Error al subir la imagen');
-                return;
-            }
+    if (error) setError(error.message);
+    else setComercios(data);
+  };
 
-            console.log("Imagen subida con éxito:", data);
-            alert('Imagen subida con éxito');
-            
-            // Actualizar la lista de imágenes
-            await obtenerImagenes();
-        } catch (catchError) {
-            console.error("Error inesperado al subir la imagen:", catchError);
-            alert('Error inesperado al subir la imagen');
-        }
-    };
+  if (!user) return <p>Cargando usuario...</p>;
 
-    const obtenerImagenes = useCallback(async () => {
-        if (!user) return;
+  return (
+    <div style={{ padding: '2rem' }}>
+      <h2>Ubicaciones del Usuario</h2>
 
-        try {
-            const { data, error } = await supabase
-                .storage
-                .from('comercios')
-                .list(null, { limit: 100 });
+      {userLocations.length === 0 ? (
+        <p>No hay ubicaciones guardadas.</p>
+      ) : (
+        <ul>
+          {userLocations.map((loc) => (
+            <li
+              key={loc.id}
+              style={{ cursor: 'pointer', marginBottom: '0.5rem' }}
+              onClick={() => fetchComercios(loc.latitude, loc.longitude)}
+            >
+              📍 {loc.address} — ({loc.latitude}, {loc.longitude})
+            </li>
+          ))}
+        </ul>
+      )}
 
-            if (error) {
-                console.error("Error al obtener las imágenes:", error);
-                return;
-            }
+      <hr />
 
-            const imagenesUrls = data.map(file => 
-                supabase.storage.from('comercios').getPublicUrl(file.name).data.publicUrl
-            );
-
-            setImagenes(imagenesUrls);
-        } catch (catchError) {
-            console.error("Error general al obtener imágenes:", catchError);
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (!user) return;
-        obtenerImagenes();
-    }, [user, obtenerImagenes]);
-
-    return (
-        <div>
-            <h2>Imágenes del bucket "comercios"</h2>
-            
-            {/* Formulario de carga de archivos */}
-            <form onSubmit={handleFileUpload} style={{ marginBottom: '20px' }}>
-                <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleFileChange} 
-                />
-                <button type="submit">Subir Imagen</button>
-            </form>
-
-            {/* Galería de imágenes */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {imagenes.map((url, index) => (
-                    <img 
-                        key={index} 
-                        src={url} 
-                        alt={`Imagen ${index}`} 
-                        style={{ width: '150px', height: '150px', objectFit: 'cover' }} 
-                    />
-                ))}
-            </div>
-        </div>
-    );
+      <h3>Comercios Cercanos</h3>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {comercios.length === 0 ? (
+        <p>No hay comercios para mostrar.</p>
+      ) : (
+        <ul>
+          {comercios.map((c) => (
+            <li key={c.id}>
+              🏪 {c.nombre} — {c.direccion} — {c.telefono} — {c.distancia_km.toFixed(2)} km
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 };
 
 export default TestComponent;
