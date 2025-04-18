@@ -125,7 +125,7 @@ const ComercioCard = ({ comercio, onUpdate }) => {
           {/* La imagen ahora dispara el input file al hacer click */}
           <div className="logo-wrapper">
             <img
-              src={comercio.logo || "/placeholder-logo.png"}
+              src={comercio.logo || "https://afuwvuyeqclmmqbryjwr.supabase.co/storage/v1/object/public/comercios//default_comerce.jpeg"}
               alt={`${comercio.nombre} logo`}
               className="comercio-logo"
               onClick={triggerFileInput}

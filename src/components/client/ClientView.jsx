@@ -6,6 +6,7 @@ import Header from '../common/Header';
 import supabase from '../../supabase/supabase.config';
 // import { useCoin } from '../../context/CoinContext';
 import './styles/ClientView.css'; // Agregar estilos globales si es necesario
+import UserLocationForm from '../common/UserLocationForm';
 
 const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     // const { currency, allCoin } = useCoin();
@@ -14,6 +15,22 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     const [categoriasConTags, setCategoriasConTags] = useState([]);
     const [filteredComercios, setFilteredComercios] = useState([]);
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(null);
+    const [locationForm, setLocationForm] = useState(false);
+
+    useEffect(() => {
+        const userLocation = async () => {
+            const { data, error } = await supabase
+                .from("user_locations")
+                .select("*")
+                .eq("user_id", user.id);
+            
+            if (!data || data.length === 0 || error) {
+                setLocationForm(true);
+            }
+        };
+
+        userLocation();
+    }, [user]);
 
     // Cargar datos desde Supabase
     useEffect(() => {
@@ -62,7 +79,6 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
 
         fetchData();
     }, []);
-
     // Manejar incremento de cantidad
     const incrementarCantidad = (productoId) => {
         const productosActualizados = productos.map((producto) =>
@@ -122,6 +138,15 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                 user={user}
                 selectedLocation={selectedLocation}
                 handleSelectLocation={handleSelectLocation}
+            />
+            <UserLocationForm
+                user={user}
+                show={locationForm}
+                handleClose={() => setLocationForm(false)}
+                handleSave={(address, position) => {
+                    handleSelectLocation({ address, ...position });
+                    setLocationForm(false);
+                }}
             />
             <div className="row">
                 <div className="col-md-3">

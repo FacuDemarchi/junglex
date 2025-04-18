@@ -36,7 +36,7 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
                             >
                                 <div className="comercio-header">
                                     <img
-                                        src={comercio.logo}
+                                        src={comercio.logo || "https://afuwvuyeqclmmqbryjwr.supabase.co/storage/v1/object/public/comercios//default_comerce.jpeg"}
                                         alt={`${comercio.nombre} logo`}
                                         className="comercio-logo"
                                     />

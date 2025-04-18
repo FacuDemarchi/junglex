@@ -73,7 +73,7 @@ const PedidoCardRecibido = ({ pedido, onAceptar, onRechazar }) => {
                     Aceptar
                 </button>
                 <a 
-                    href={`https://wa.me/${phone}`} 
+                    href={`https://wa.me/+549${phone}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="btn btn-primary">

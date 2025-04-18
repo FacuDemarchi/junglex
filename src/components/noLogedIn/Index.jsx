@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Index.css';
 import { useAuth } from "../../context/AuthContext";
+import supabase  from '../../supabase/supabase.config';
 
 const Index = () => {
-  const { signInWithGoogle } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      const setNewUser = async () => {
+        const { error } = await supabase
+          .from('user_data')
+          .upsert({ user_id: user.id, user_type: 'cliente' })
+        if (error) { console.error('Error al guardar el usuario', error) }
+      };
+
+      setNewUser();
+    }
+  }, [user])
 
   return (
     <div className="index-container">
