@@ -5,6 +5,8 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const redirectTo = process.env.NEXT_PUBLIC_REDIRECT_URL 
+    || window.location.origin;
 
   useEffect(() => {
     const fetchUserData = async (user) => {
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
+          options: {redirectTo}
         });
         if (error) {
           console.error('Error logging in with Google:', error.message);

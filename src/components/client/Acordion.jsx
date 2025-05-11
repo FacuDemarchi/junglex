@@ -12,14 +12,10 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
     return (
         <div className="accordion" id="accordionExample">
             {comercios.map((comercio, index) => {
-                // Filtrar los productos que pertenecen al comercio actual Y están disponibles
-                const productosDelComercio = productos.filter(
-                    (producto) => 
-                        producto.comercio_id === comercio.id && 
-                        producto.disponible === true
-                );
+                // Los productos ya vienen dentro del comercio
+                const productosDelComercio = comercio.productos || [];
 
-                // Si no hay productos disponibles para este comercio, no lo renderices
+                // Si no hay productos para este comercio, no lo renderices
                 if (productosDelComercio.length === 0) {
                     return null;
                 }
@@ -44,6 +40,8 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
                                         <h3 className="comercio-nombre">{comercio.nombre}</h3>
                                         <p className="comercio-direccion">Dirección: {comercio.direccion}</p>
                                         <p className="comercio-telefono">Teléfono: {comercio.telefono}</p>
+                                        <p className="comercio-distancia">Distancia: {comercio.distancia_km.toFixed(2)} km</p>
+                                        <p className="comercio-categoria">Categoría: {comercio.categorias?.nombre}</p>
                                     </div>
                                 </div>
                             </button>
@@ -60,7 +58,12 @@ const Accordion = ({ comercios, productos, incrementarCantidad, decrementarCanti
                                         {productosDelComercio.map((producto) => (
                                             <ProductoCard
                                                 key={producto.id}
-                                                producto={producto}
+                                                producto={{
+                                                    ...producto,
+                                                    comercio_id: comercio.id,
+                                                    comercio_nombre: comercio.nombre,
+                                                    distancia_km: comercio.distancia_km
+                                                }}
                                                 onIncrementar={() => incrementarCantidad(producto.id)}
                                                 onDecrementar={() => decrementarCantidad(producto.id)}
                                             />

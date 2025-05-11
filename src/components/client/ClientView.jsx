@@ -35,9 +35,12 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
     // Cargar datos desde Supabase
     useEffect(() => {
         const fetchData = async () => {
-            const { data: comerciosData, error } = await supabase
-                .from('comercios')
-                .select(`*, categorias(*), productos(*, tags_producto(*, tags(nombre)))`);
+            if (!selectedLocation) return;
+
+            const { data: comerciosData, error } = await supabase.rpc('obtener_comercios_cercanos', {
+                latitud: selectedLocation.latitude,
+                longitud: selectedLocation.longitude
+            });
 
             if (error) {
                 console.error('Error fetching comercios:', error);
@@ -51,9 +54,12 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                 const categoria = comercio.categorias?.nombre;
                 if (categoria) {
                     if (!acc[categoria]) acc[categoria] = new Set();
-                    comercio.productos.forEach((producto) =>
-                        producto.tags_producto.forEach((tag) => acc[categoria].add(tag.tags.nombre))
-                    );
+                    // Ahora los tags están dentro de cada producto
+                    comercio.productos.forEach((producto) => {
+                        producto.tags_producto.forEach((tagProducto) => {
+                            acc[categoria].add(tagProducto.tags.nombre);
+                        });
+                    });
                 }
                 return acc;
             }, {});
@@ -72,13 +78,17 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                 comercio.productos.map((producto) => ({
                     ...producto,
                     cantidad: 0,
+                    comercio_id: comercio.id, // Agregamos el ID del comercio al producto
+                    comercio_nombre: comercio.nombre, // Agregamos el nombre del comercio al producto
+                    distancia_km: comercio.distancia_km // Agregamos la distancia al producto
                 }))
             );
             setProductos(todosLosProductos);
         };
 
         fetchData();
-    }, []);
+    }, [selectedLocation]);
+
     // Manejar incremento de cantidad
     const incrementarCantidad = (productoId) => {
         const productosActualizados = productos.map((producto) =>
@@ -108,7 +118,9 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
             }
             if (tipo === 'tag') {
                 return comercio.productos.some((producto) =>
-                    producto.tags_producto.some((tag) => tag.tags.nombre === filtro)
+                    producto.tags_producto.some((tagProducto) => 
+                        tagProducto.tags.nombre === filtro
+                    )
                 );
             }
             return true;
@@ -189,12 +201,25 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                     }}>Registrar Mi Comercio</button>
                 </div>
                 <div className="col-md-9">
-                    <Acordion
-                        comercios={comerciosFiltrados}
-                        productos={productos}
-                        incrementarCantidad={incrementarCantidad}
-                        decrementarCantidad={decrementarCantidad}
-                    />
+                    {!selectedLocation ? (
+                        <div className="alert alert-info text-center">
+                            <h4>Selecciona una ubicación</h4>
+                            <p>Por favor, selecciona o agrega una ubicación para ver los comercios cercanos.</p>
+                        </div>
+                    ) : comercios.length === 0 ? (
+                        <div className="alert alert-warning text-center">
+                            <h4>No hay comercios cercanos</h4>
+                            <p>Lo sentimos, no encontramos comercios que entreguen en tu zona.</p>
+                            <p>Puedes intentar con otra ubicación o registrarte como comercio si quieres ofrecer tus productos.</p>
+                        </div>
+                    ) : (
+                        <Acordion
+                            comercios={comerciosFiltrados}
+                            productos={productos}
+                            incrementarCantidad={incrementarCantidad}
+                            decrementarCantidad={decrementarCantidad}
+                        />
+                    )}
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
     const autoCompleteRef = useRef(null);
     const inputRef = useRef(null);
 
@@ -46,12 +47,33 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     }, [handlePlaceChanged]);
 
     const handleSavePosition = async () => {
+        if (isSaving) return;
+        
         if (!address) {
             alert('Por favor ingrese una dirección de envío');
             return;
         }
 
+        setIsSaving(true);
+
         try {
+            const { data: existingLocations, error: checkError } = await supabase
+                .from('user_locations')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('address', address)
+                .eq('latitude', position.lat)
+                .eq('longitude', position.lng);
+
+            if (checkError) throw checkError;
+
+            if (existingLocations && existingLocations.length > 0) {
+                alert('Esta ubicación ya está guardada');
+                handleSave(address, position);
+                handleClose();
+                return;
+            }
+
             const { error: locationError } = await supabase
                 .from('user_locations')
                 .insert([
@@ -84,6 +106,8 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
         } catch (error) {
             console.error('Error al guardar la ubicación o el teléfono en Supabase:', error.message);
             alert('Hubo un error al guardar la ubicación o el teléfono. Inténtalo de nuevo.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -124,11 +148,15 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
                 </div>
 
                 <div className="button-group">
-                    <button onClick={handleClose} className="cancel-button">
+                    <button onClick={handleClose} className="cancel-button" disabled={isSaving}>
                         Cancelar
                     </button>
-                    <button onClick={handleSavePosition} className="save-button">
-                        Guardar Ubicación
+                    <button 
+                        onClick={handleSavePosition} 
+                        className="save-button"
+                        disabled={isSaving}
+                    >
+                        {isSaving ? 'Guardando...' : 'Guardar Ubicación'}
                     </button>
                 </div>
             </div>
