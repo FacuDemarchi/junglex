@@ -4,7 +4,7 @@ import supabase from '../../supabase/supabase.config';
 import TagSelector from './TagSelector'; // Componente para la selección de tags
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
-import './checkbox.css';
+import './styles/checkbox.css';
 
 const MisProductos = ({ user }) => {
   const [productos, setProductos] = useState([]);
