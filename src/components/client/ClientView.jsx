@@ -8,7 +8,7 @@ import supabase from '../../supabase/supabase.config';
 import './styles/ClientView.css'; // Agregar estilos globales si es necesario
 import UserLocationForm from '../common/UserLocationForm';
 
-const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
+const ClientView = ({ user, selectedLocation, handleSelectLocation, isTemporaryView = false }) => {
     // const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
@@ -150,6 +150,7 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                 user={user}
                 selectedLocation={selectedLocation}
                 handleSelectLocation={handleSelectLocation}
+                isTemporaryView={isTemporaryView}
             />
             <UserLocationForm
                 user={user}
@@ -177,28 +178,30 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation }) => {
                         user={user}
                         resetCantidades={resetCantidades}
                     />
-                    <button onClick={async () => {
-                        try {
-                            const { error } = await supabase
-                                .from('user_data')
-                                .upsert({
-                                    user_id: user.id,
-                                    user_type: 'comercio',
-                                });
-                            if (error) {console.error('Error al registrar al comercio en tabla user_data:', error); return;}
-                            
-                            const {errorc} = await supabase
-                                .from('comercios')
-                                .upsert({id: user.id});
-                            if (errorc) {console.log('Error al registrar el comercio en tabla comercios'); return;}
+                    {!isTemporaryView && (
+                        <button onClick={async () => {
+                            try {
+                                const { error } = await supabase
+                                    .from('user_data')
+                                    .upsert({
+                                        user_id: user.id,
+                                        user_type: 'comercio',
+                                    });
+                                if (error) {console.error('Error al registrar al comercio en tabla user_data:', error); return;}
+                                
+                                const {errorc} = await supabase
+                                    .from('comercios')
+                                    .upsert({id: user.id});
+                                if (errorc) {console.log('Error al registrar el comercio en tabla comercios'); return;}
 
-                            alert('Registro exitoso como comercio');
-                            await new Promise(resolve => setTimeout(resolve, 2000));
-                            window.location.reload();
-                        } catch (error) {
-                            console.error('Error registrando como comercio:', error);
-                        }
-                    }}>Registrar Mi Comercio</button>
+                                alert('Registro exitoso como comercio');
+                                await new Promise(resolve => setTimeout(resolve, 2000));
+                                window.location.reload();
+                            } catch (error) {
+                                console.error('Error registrando como comercio:', error);
+                            }
+                        }}>Registrar Mi Comercio</button>
+                    )}
                 </div>
                 <div className="col-md-9">
                     {!selectedLocation ? (

@@ -4,8 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import UserLocationForm from "./UserLocationForm";
 import supabase from "../../supabase/supabase.config";
 import AllCoinDropdown from "./AllCoinDropdown";
+import { Link } from "react-router-dom";
 
-const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioView }) => {
+const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioView, isTemporaryView }) => {
     const [userLocations, setUserLocations] = useState([]);
     const [showLocationForm, setShowLocationForm] = useState(false);
     const { signInWithGoogle, signOut } = useAuth();
@@ -82,14 +83,28 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
         <>
             <Navbar bg="light" expand="lg">
                 <Container>
-                    {/* Logo y nombre */}
+                    {/* Logo y nombre - Ahora con Link o href dependiendo del contexto */}
                     <div className="d-flex align-items-center position-absolute start-0 ms-3">
-                        <img
-                            src="/favicon.ico"
-                            alt="Junglex Logo"
-                            style={{ width: "30px", height: "30px", marginRight: "10px" }}
-                        />
-                        <Navbar.Brand href="#home">Junglex</Navbar.Brand>
+                        {/* Si es vista temporal (cliente), el logo redirige a / */}
+                        {isTemporaryView ? (
+                            <Link to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                                <img
+                                    src="/favicon.ico"
+                                    alt="Junglex Logo"
+                                    style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                                />
+                                <span className="navbar-brand">Junglex</span>
+                            </Link>
+                        ) : (
+                            <>
+                                <img
+                                    src="/favicon.ico"
+                                    alt="Junglex Logo"
+                                    style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                                />
+                                <Navbar.Brand>Junglex</Navbar.Brand>
+                            </>
+                        )}
                     </div>
 
                     {/* Botón de login/Dropdown */}
@@ -105,6 +120,13 @@ const Header = ({ user, selectedLocation, handleSelectLocation, handleComercioVi
                         ) : (
                             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                                 <Nav className="align-items-center">
+                                    {/* Agregar indicador de vista temporal */}
+                                    {isTemporaryView && (
+                                        <div className="badge bg-warning text-dark me-3">
+                                            Vista temporal de cliente
+                                        </div>
+                                    )}
+                                    
                                     {/* Manejo de ubicaciones */}
                                     {user.user_data?.user_type === "cliente" && (
                                         <>
