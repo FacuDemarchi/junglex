@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Acordion from './Acordion';
 import Carrito from './Carrito';
 import CategoriaFiltro from './CategoriaFiltro';
@@ -9,6 +10,7 @@ import './styles/ClientView.css'; // Agregar estilos globales si es necesario
 import UserLocationForm from '../common/UserLocationForm';
 
 const ClientView = ({ user, selectedLocation, handleSelectLocation, isTemporaryView = false }) => {
+    const navigate = useNavigate();
     // const { currency, allCoin } = useCoin();
     const [comercios, setComercios] = useState([]);
     const [productos, setProductos] = useState([]);
@@ -179,28 +181,12 @@ const ClientView = ({ user, selectedLocation, handleSelectLocation, isTemporaryV
                         resetCantidades={resetCantidades}
                     />
                     {!isTemporaryView && (
-                        <button onClick={async () => {
-                            try {
-                                const { error } = await supabase
-                                    .from('user_data')
-                                    .upsert({
-                                        user_id: user.id,
-                                        user_type: 'comercio',
-                                    });
-                                if (error) {console.error('Error al registrar al comercio en tabla user_data:', error); return;}
-                                
-                                const {errorc} = await supabase
-                                    .from('comercios')
-                                    .upsert({id: user.id});
-                                if (errorc) {console.log('Error al registrar el comercio en tabla comercios'); return;}
-
-                                alert('Registro exitoso como comercio');
-                                await new Promise(resolve => setTimeout(resolve, 2000));
-                                window.location.reload();
-                            } catch (error) {
-                                console.error('Error registrando como comercio:', error);
-                            }
-                        }}>Registrar Mi Comercio</button>
+                        <button 
+                            className="btn btn-primary w-100 mt-3"
+                            onClick={() => navigate('/registro-comercio')}
+                        >
+                            Registrar Mi Comercio
+                        </button>
                     )}
                 </div>
                 <div className="col-md-9">

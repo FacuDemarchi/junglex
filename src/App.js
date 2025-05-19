@@ -5,11 +5,13 @@ import ComercioView from './components/comercio/ComercioView';
 import ClientView from './components/client/ClientView';
 import Index from './components/noLogedIn/Index.jsx';
 import TestComponent from './components/testingFuncitions/TestComponent';
+import RegistroComercio from './components/comercio/RegistroComercio';
 
 // Componente para la vista temporal de cliente
 const ClienteTemp = () => {
     const { user } = useAuth();
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [carritoVisible, setCarritoVisible] = useState(true);
 
     const handleSelectLocation = (location) => {
         setSelectedLocation(location);
@@ -39,12 +41,15 @@ const ClienteTemp = () => {
             selectedLocation={selectedLocation} 
             handleSelectLocation={handleSelectLocation}
             isTemporaryView={true}
+            carritoVisible={carritoVisible}
+            setCarritoVisible={setCarritoVisible}
         />
     );
 };
 
 const App = () => {
     const { user } = useAuth();
+    console.log('user_id: ', user);
     const [comercioView, setComercioView] = useState('MisPedidos');
     const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -85,6 +90,7 @@ const App = () => {
                 {/* Nueva ruta para vista de cliente temporal */}
                 <Route path="/vista-cliente" element={<ClienteTemp />} />
                 <Route path="/test" element={<TestComponent />} />
+                <Route path="/registro-comercio" element={<RegistroComercio />} />
             </Routes>
         </Router>
     );
