@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ComercioView from './components/comercio/ComercioView';
 import ClientView from './components/client/ClientView';
-import Index from './components/noLogedIn/Index.jsx';
+import Index from './components/noLogedIn/Index';
 import TestComponent from './components/testingFuncitions/TestComponent';
 import RegistroComercio from './components/comercio/RegistroComercio';
 
