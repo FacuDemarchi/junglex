@@ -1,0 +1,92 @@
+.dropdownContainer {
+    position: relative;
+    margin-left: var(--spacing-sm);
+    display: inline-block;
+}
+
+.dropdownToggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+}
+
+.dropdownToggle:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+}
+
+.coinIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    min-width: 200px;
+    max-width: 200px;
+    z-index: 1000;
+    padding: var(--spacing-xs);
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--spacing-xs);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.coinsList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.coinItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+    padding: var(--spacing-xs);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    color: var(--text-primary);
+    transition: all 0.2s ease-in-out;
+    text-align: left;
+}
+
+.coinItem:hover {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.noCoins {
+    padding: var(--spacing-xs);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    text-align: center;
+} 

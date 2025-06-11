@@ -1,0 +1,177 @@
+.acordionContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 12px;
+    padding: var(--spacing-md);
+}
+
+.comercioItem {
+    width: 100%;
+}
+
+.comercioHeaderContainer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.comercioHeaderContainer:hover {
+    background-color: #e0e0e0;
+}
+
+.comercioHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.comercioLogo {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.comercioInfo {
+    flex: 1;
+}
+
+.comercioNombre {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.comercioDescripcion {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+}
+
+.comercioProductos {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--light-color);
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.productoItem {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.productoItem:hover {
+    background-color: #e0e0e0;
+}
+
+.productoNombre {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin: 0;
+    margin-bottom: 2px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.precioYControles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+}
+
+.productoPrecio {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+    padding: 0;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    line-height: 22px;
+}
+
+.controles {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 22px;
+    padding: 0;
+    margin: 0;
+}
+
+.cantidadButton {
+    width: 22px;
+    height: 22px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    margin: 0;
+}
+
+.cantidadButton:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.cantidadButton:disabled {
+    background-color: #e0e0e0;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.cantidad {
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 22px;
+    text-align: center;
+    line-height: 22px;
+    color: var(--text-primary);
+    padding: 0;
+    margin: 0;
+}
+
+.dropdownIcon {
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+    font-size: 0.8rem;
+}
+
+.dropdownIcon.active {
+    transform: rotate(180deg);
+} 

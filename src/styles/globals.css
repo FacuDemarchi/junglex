@@ -1,21 +1,27 @@
 :root {
   /* Colores principales */
-  --primary-color: #50745f;
-  --primary-light: #6b8c7a;
-  --primary-dark: #3d5a4a;
-  --secondary-color: #8a9a8e;
-  --success-color: #4caf50;
-  --danger-color: #f44336;
-  --warning-color: #ff9800;
-  --info-color: #2196f3;
-  --light-color: #f8f9fa;
-  --dark-color: #343a40;
+  --primary-color: #3d5a4a;      /* Verde oscuro, desaturado */
+  --primary-light: #6b8c7a;      /* Verde medio, desaturado */
+  --primary-dark: #222e29;       /* Verde muy oscuro, casi negro */
+  
+  --secondary-color: #78909c;    /* Azul-Gris desaturado */
+  --secondary-light: #cfd8dc;    /* Azul-Gris muy claro */
+  --secondary-dark: #455a64;     /* Azul-Gris oscuro */
+
+  --accent-color: #c68642;       /* Naranja/Marrón terroso */
+  --warning-color: #c68642;      /* Mismo que acento para advertencias */
+  --success-color: #3d5a4a;      /* Mismo que primary-color para éxito */
+  --danger-color: #b71c1c;       /* Rojo ladrillo profundo */
+  --info-color: #1976d2;         /* Azul profundo */
+
+  --light-color: #e0e0e0;        /* Gris muy claro, nuevo fondo general */
+  --dark-color: #212121;         /* Gris muy oscuro, casi negro */
 
   /* Colores de texto */
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-light: #f8f9fa;
-  --text-dark: #343a40;
+  --text-primary: #212121;       /* Gris muy oscuro para texto principal */
+  --text-secondary: #455a64;     /* Azul-Gris oscuro para texto secundario */
+  --text-light: #ffffff;         /* Blanco puro para texto claro */
+  --text-dark: #212121;          /* Gris muy oscuro para texto oscuro */
 
   /* Espaciado */
   --spacing-xs: 0.25rem;
@@ -40,13 +46,13 @@
 
   /* Bordes */
   --border-radius: 0.25rem;
-  --border-color: #dee2e6;
+  --border-color: #b0bec5;       /* Gris azulado claro para bordes */
   --border-width: 1px;
 
   /* Sombras */
-  --box-shadow: 0 0.5rem 1rem rgba(80, 116, 95, 0.15);
-  --box-shadow-sm: 0 0.125rem 0.25rem rgba(80, 116, 95, 0.075);
-  --box-shadow-lg: 0 1rem 3rem rgba(80, 116, 95, 0.175);
+  --box-shadow: 0 0.5rem 1rem rgba(61, 90, 74, 0.15);    /* Sombra con el primary-color */
+  --box-shadow-sm: 0 0.125rem 0.25rem rgba(61, 90, 74, 0.075);
+  --box-shadow-lg: 0 1rem 3rem rgba(61, 90, 74, 0.175);
 }
 
 /* Reset básico */

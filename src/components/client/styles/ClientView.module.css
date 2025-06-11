@@ -1,0 +1,353 @@
+.container {
+    min-height: calc(100vh - 60px);
+    background-color: var(--light-color);
+    padding: 0;
+    margin: 0;
+}
+
+.row {
+    display: flex;
+    gap: 0;
+    padding: var(--spacing-sm) 0;
+    max-width: 1400px;
+    margin: 0;
+}
+
+.columnLeft {
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-left: 5px;
+}
+
+.columnRight {
+    flex: 1;
+    min-width: 0;
+}
+
+.registerButton {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+    background-color: var(--primary-color);
+    border: none;
+    color: var(--text-light);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+}
+
+.registerButton:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.alert {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border: var(--border-width) solid transparent;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.alertInfo {
+    color: var(--info-color);
+    background-color: rgba(33, 150, 243, 0.1);
+    border-color: var(--info-color);
+}
+
+.alertWarning {
+    color: var(--warning-color);
+    background-color: rgba(255, 152, 0, 0.1);
+    border-color: var(--warning-color);
+}
+
+.alertText {
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.4;
+    font-size: var(--font-size-sm);
+}
+
+.alertTitle {
+    margin-bottom: var(--spacing-xs);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-base);
+}
+
+/* Estilos para el Acordion */
+.acordionContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    margin-top: 0;
+    padding: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-right: 5px;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #eaeaea;
+}
+
+.comercioItem {
+    width: 100%;
+}
+
+.comercioHeaderContainer {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-sm);
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    cursor: pointer;
+    min-height: 50px;
+}
+
+.comercioHeaderContainer:hover {
+    background-color: var(--light-color);
+    box-shadow: var(--box-shadow);
+}
+
+.comercioHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.comercioLogo {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+}
+
+.comercioInfo {
+    flex: 1;
+}
+
+.comercioNombre {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.comercioDescripcion {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.dropdownIcon {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    transition: transform 0.2s ease-in-out;
+    margin-left: auto;
+    padding: 4px;
+}
+
+.dropdownIcon.active {
+    transform: rotate(180deg);
+}
+
+.productosList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    padding: 8px;
+    background-color: var(--light-color);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    margin-top: 4px;
+    animation: slideDown 0.2s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.productoItem {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-sm);
+    transition: all 0.2s ease-in-out;
+    min-height: 40px;
+    height: 100%;
+}
+
+.productoHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.productoNombre {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    line-height: 1.2;
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+}
+
+.cantidadControls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cantidadButton {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: var(--font-size-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.cantidadButton:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.cantidadButton:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+.cantidad {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    min-width: 20px;
+    text-align: center;
+}
+
+.productoInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.tag {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    background-color: var(--light-color);
+    padding: 1px 4px;
+    border-radius: var(--border-radius);
+    line-height: 1.2;
+}
+
+/* Estilos para el botón del acordeón */
+:global(.accordion-button) {
+    padding: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+}
+
+:global(.accordion-button:not(.collapsed)) {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+:global(.accordion-button::after) {
+    margin-right: var(--spacing-xs) !important;
+    flex-shrink: 0 !important;
+}
+
+:global(.accordion-button:focus) {
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+:global(.accordion-item) {
+    border: none !important;
+    margin-bottom: var(--spacing-sm) !important;
+    width: 100% !important;
+}
+
+:global(.accordion-collapse) {
+    border: none !important;
+    width: 100% !important;
+}
+
+:global(.accordion) {
+    width: 100% !important;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .columnLeft {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .columnRight {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .row {
+        padding: var(--spacing-xs);
+    }
+
+    .alert {
+        padding: var(--spacing-xs);
+    }
+
+    .alertTitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .productosList {
+        grid-template-columns: 1fr;
+    }
+
+    .cantidadControls {
+        width: 100%;
+        justify-content: flex-end;
+    }
+} 

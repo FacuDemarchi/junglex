@@ -1,0 +1,208 @@
+.carrito {
+    background-color: var(--light-color);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 16px;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.listGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comercioSection {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
+.comercioTitulo {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+}
+
+.productosList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.productoItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.productoItem:hover {
+    background-color: #e0e0e0;
+}
+
+.productoInfo {
+    flex: 1;
+}
+
+.productoNombre {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin: 0;
+    margin-bottom: 2px;
+}
+
+.productoPrecio {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.cantidadControls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cantidadButton {
+    width: 22px;
+    height: 22px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.cantidadButton:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.cantidadButton:disabled {
+    background-color: #e0e0e0;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.cantidad {
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 22px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.badge {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.button {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.button:disabled {
+    background-color: #e0e0e0;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.alert {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+}
+
+/* Animación para nuevos items */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.productoItem {
+    animation: slideIn 0.2s ease-out;
+}
+
+/* Animación de éxito del pedido */
+.successAnimation {
+    position: fixed; /* Posicionar sobre todo */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--primary-color); /* Fondo verde */
+    color: var(--text-light); /* Texto blanco */
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: var(--box-shadow-lg);
+    z-index: 10000; /* Asegurar que esté por encima de todo */
+    animation: fadeInOut 3s forwards; /* Duración y retención al final */
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -60%); } /* Empieza desvanecido y un poco arriba */
+    10% { opacity: 1; transform: translate(-50%, -50%); } /* Aparece y se centra */
+    90% { opacity: 1; transform: translate(-50%, -50%); } /* Permanece visible */
+    100% { opacity: 0; transform: translate(-50%, -40%); } /* Desaparece y se mueve un poco hacia abajo */
+} 

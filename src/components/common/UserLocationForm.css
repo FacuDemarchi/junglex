@@ -6,57 +6,130 @@
     z-index: 1000; /* Asegúrate de que esté por encima del contenido */
     width: 90%; /* Aumenta el ancho general */
     max-width: 600px; /* Aumenta el tamaño máximo */
-    background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
-    border-radius: 12px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15); /* Sombra más prominente */
-    padding: 30px; /* Espacio interno mayor */
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: var(--spacing-lg);
   }
   
   .floating-form {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: var(--spacing-md);
+    position: relative;
   }
   
   .input-address {
     width: 100%;
-    padding: 12px; /* Más padding en el input */
-    margin-bottom: 15px; /* Espacio mayor entre el input y el mapa */
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px; /* Texto más grande */
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    font-size: var(--font-size-md);
+    background-color: var(--light-color);
+    color: var(--text-primary);
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    z-index: 1001;
+  }
+  
+  .input-address:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.1);
+  }
+  
+  /* Estilos para el autocomplete de Google */
+  .pac-container {
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    margin-top: 4px;
+    z-index: 1002 !important;
+  }
+  
+  .pac-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .pac-item:hover {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+  }
+  
+  .pac-item-query {
+    color: var(--text-primary);
+    font-size: var(--font-size-md);
+  }
+  
+  .pac-item:hover .pac-item-query {
+    color: var(--text-light);
   }
   
   .map-container {
     width: 100%;
     height: 300px; /* Aumenta la altura del mapa */
-    margin-bottom: 20px;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     overflow: hidden;
+    border: 1px solid var(--border-color);
   }
   
   .button-group {
     display: flex;
     justify-content: space-between; /* Alinea los botones uno al lado del otro */
     width: 100%; /* Asegúrate de que ocupen todo el ancho */
+    gap: var(--spacing-md);
   }
   
   .save-button, .cancel-button {
-    padding: 12px 25px;
+    padding: var(--spacing-sm) var(--spacing-md);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    width: 48%; /* Ocupa el 48% del ancho para que haya un pequeño espacio entre los botones */
-    font-size: 16px; /* Texto de los botones más grande */
+    width: 100%;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    transition: all 0.2s ease-in-out;
   }
   
   .save-button {
-    background-color: #28a745;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+  }
+  
+  .save-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .save-button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
   
   .cancel-button {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--accent-color);
+    color: var(--text-light);
+  }
+  
+  .cancel-button:hover {
+    background-color: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .cancel-button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
   
