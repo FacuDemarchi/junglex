@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import supabase from '../../supabase/supabase.config';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import Script from 'react-load-script';
+import { useScript } from '../../hooks/useScript';
 
 const Marker = ({ text }) => <div>{text}</div>;
 
@@ -25,6 +25,14 @@ const RegistroComercio = () => {
     horario_cierre: '',
     dis_max_envio_km: 0
   });
+
+  const status = useScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places');
+
+  useEffect(() => {
+    if (status === 'ready') {
+      setScriptLoaded(true);
+    }
+  }, [status]);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -233,17 +241,9 @@ const RegistroComercio = () => {
     }
   };
 
-  const handleScriptLoad = () => {
-    setScriptLoaded(true);
-  };
-
   return (
     <div className="container mt-4">
       <h2 className="mb-4">Registro de Comercio</h2>
-      <Script
-        url={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        onLoad={handleScriptLoad}
-      />
       <form onSubmit={handleSubmit}>
         <div className="row mb-3">
           <div className="col-md-6">

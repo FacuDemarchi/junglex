@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import GoogleMapReact from 'google-map-react';
 import supabase from '../../supabase/supabase.config';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import Script from 'react-load-script';
+import { useScript } from '../../hooks/useScript';
 
 const Marker = ({ text }) => <div>{text}</div>;
 
@@ -24,6 +24,14 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   const [delayedRender, setDelayedRender] = useState(false);
+
+  const status = useScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places');
+
+  useEffect(() => {
+    if (status === 'ready') {
+      setScriptLoaded(true);
+    }
+  }, [status]);
 
   // Cargar las categorías desde Supabase
   useEffect(() => {
@@ -230,18 +238,8 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
     }
   };
 
-  // Handler cuando se carga el script de Google Maps
-  const handleScriptLoad = () => {
-    setScriptLoaded(true);
-  };
-
   return (
     <Modal show={show} onHide={onHide} size="lg">
-      {/* Cargar la API de Google Maps con la librería places */}
-      <Script
-        url={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        onLoad={handleScriptLoad}
-      />
       <Modal.Header closeButton>
         <Modal.Title>Configurar Comercio</Modal.Title>
       </Modal.Header>
