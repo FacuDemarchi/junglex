@@ -1,0 +1,112 @@
+.registro-comercio-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.autocomplete-dropdown-container {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.suggestion-item {
+  padding: 0.75rem;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f8f9fa;
+}
+
+.map-container {
+  height: 300px;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.marker {
+  font-size: 1.5rem;
+  transform: translate(-50%, -50%);
+}
+
+.current-logo {
+  max-width: 200px;
+  max-height: 200px;
+  margin-top: 1rem;
+  border-radius: 4px;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .registro-comercio-container {
+    padding: 1rem;
+  }
+
+  .map-container {
+    height: 200px;
+  }
+} 

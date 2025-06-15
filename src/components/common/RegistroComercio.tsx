@@ -2,22 +2,79 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import supabase from '../../supabase/supabase.config';
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import PlacesAutocomplete, { 
+  geocodeByAddress, 
+  getLatLng
+} from 'react-places-autocomplete';
 import { useScript } from '../../hooks/useScript';
+import './styles/RegistroComercio.modal.css';
 
-const Marker = ({ text }) => <div>{text}</div>;
+interface MarkerProps {
+  text: string;
+  style?: React.CSSProperties;
+  lat: number;
+  lng: number;
+}
+
+interface LogoState {
+  preview: string | null;
+  file: File | null;
+}
+
+interface UbicacionState {
+  position: {
+    lat: number;
+    lng: number;
+  };
+  address: string;
+}
+
+interface FormData {
+  nombre: string;
+  telefono: string;
+  categorias: string;
+  horario_apertura: string;
+  horario_cierre: string;
+  dis_max_envio_km: number;
+}
+
+interface Categoria {
+  id: string;
+  nombre: string;
+}
+
+interface PlacesAutocompleteRenderProps {
+  getInputProps: (options?: any) => any;
+  suggestions: Array<{
+    active: boolean;
+    description: string;
+    placeId: string;
+    types: string[];
+  }>;
+  getSuggestionItemProps: (suggestion: any, options?: any) => any;
+  loading: boolean;
+}
+
+const Marker: React.FC<MarkerProps> = ({ text, style, lat, lng }) => (
+  <div style={style}>{text}</div>
+);
 
 const RegistroComercio = () => {
   const navigate = useNavigate();
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
-  const fileInputRef = useRef(null);
-  const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
-  const [address, setAddress] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [delayedRender, setDelayedRender] = useState(false);
-  const [formData, setFormData] = useState({
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [logo, setLogo] = useState<LogoState>({
+    preview: null,
+    file: null
+  });
+
+  const [ubicacion, setUbicacion] = useState<UbicacionState>({
+    position: { lat: -31.42472, lng: -64.18855 },
+    address: ''
+  });
+
+  const [categories, setCategories] = useState<Categoria[]>([]);
+  const [formData, setFormData] = useState<FormData>({
     nombre: '',
     telefono: '',
     categorias: '',
@@ -26,54 +83,56 @@ const RegistroComercio = () => {
     dis_max_envio_km: 0
   });
 
+  const [isMapReady, setIsMapReady] = useState(false);
+
   const status = useScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places');
 
   useEffect(() => {
     if (status === 'ready') {
-      setScriptLoaded(true);
+      setIsMapReady(true);
     }
   }, [status]);
 
   useEffect(() => {
-    async function fetchCategories() {
+    const fetchCategories = async () => {
       const { data, error } = await supabase.from('categorias').select('*');
       if (error) {
         console.error('Error fetching categories:', error);
       } else {
-        setCategories(data);
+        setCategories(data as Categoria[]);
       }
-    }
+    };
     fetchCategories();
-    setDelayedRender(true);
   }, []);
 
-  const handleSelect = (selectedAddress) => {
-    setAddress(selectedAddress);
-    geocodeByAddress(selectedAddress)
-      .then((results) => getLatLng(results[0]))
-      .then((latLng) => {
-        setPosition(latLng);
-      })
-      .catch((error) => console.error('Error en geocodeByAddress:', error));
+  const handleSelect = async (selectedAddress: string) => {
+    setUbicacion(prev => ({ ...prev, address: selectedAddress }));
+    try {
+      const results = await geocodeByAddress(selectedAddress);
+      const latLng = await getLatLng(results[0]);
+      setUbicacion(prev => ({ ...prev, position: latLng }));
+    } catch (error) {
+      console.error('Error en geocodeByAddress:', error);
+    }
   };
 
-  const handleMapChange = ({ center }) => {
-    setPosition({ lat: center.lat, lng: center.lng });
+  const handleMapChange = ({ center }: { center: { lat: number; lng: number } }) => {
+    setUbicacion(prev => ({ ...prev, position: { lat: center.lat, lng: center.lng } }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       processFile(file);
     }
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     const file = e.dataTransfer.files[0];
@@ -82,7 +141,7 @@ const RegistroComercio = () => {
     }
   };
 
-  const processFile = (file) => {
+  const processFile = (file: File) => {
     if (file.type.startsWith('image/')) {
       if (file.size > 5 * 1024 * 1024) {
         alert('El archivo es demasiado grande. Máximo 5MB.');
@@ -91,8 +150,10 @@ const RegistroComercio = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         compressImage(file, (compressedFile) => {
-          setLogoPreview(reader.result);
-          setLogoFile(compressedFile || file);
+          setLogo({
+            preview: reader.result as string,
+            file: compressedFile || file
+          });
         });
       };
       reader.readAsDataURL(file);
@@ -101,12 +162,12 @@ const RegistroComercio = () => {
     }
   };
 
-  const compressImage = (file, callback) => {
+  const compressImage = (file: File, callback: (file: File) => void) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
       const img = new Image();
-      img.src = event.target.result;
+      img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 800;
@@ -129,28 +190,31 @@ const RegistroComercio = () => {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        canvas.toBlob(
-          (blob) => {
-            const compressedFile = new File([blob], file.name, {
-              type: file.type,
-              lastModified: Date.now(),
-            });
-            callback(compressedFile);
-          },
-          file.type,
-          0.7
-        );
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: file.type,
+                  lastModified: Date.now(),
+                });
+                callback(compressedFile);
+              }
+            },
+            file.type,
+            0.7
+          );
+        }
       };
     };
   };
 
   const triggerFileInput = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -158,36 +222,35 @@ const RegistroComercio = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (!address) {
+      if (!ubicacion.address) {
         alert('Por favor, seleccione una dirección');
         return;
       }
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      if (userError || !user) throw new Error('Usuario no autenticado');
 
-      // Verificar si el comercio ya existe
       const { data: existingComercio, error: checkError } = await supabase
         .from('comercios')
         .select('*')
         .eq('id', user.id)
         .single();
 
-      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 es el código cuando no se encuentra el registro
+      if (checkError && checkError.code !== 'PGRST116') {
         throw checkError;
       }
 
       let logoUrl = null;
-      if (logoFile) {
-        const fileExt = logoFile.name.split('.').pop();
+      if (logo.file) {
+        const fileExt = logo.file.name.split('.').pop();
         const fileName = `${user.id}/logo.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from('comercios')
-          .upload(fileName, logoFile, { upsert: true });
+          .upload(fileName, logo.file, { upsert: true });
 
         if (uploadError) throw uploadError;
 
@@ -197,19 +260,18 @@ const RegistroComercio = () => {
 
         logoUrl = urlData.publicUrl;
       } else if (existingComercio?.logo) {
-        // Si no se sube un nuevo logo y existe uno anterior, mantener el anterior
         logoUrl = existingComercio.logo;
       }
 
       const comercioData = {
         id: user.id,
         nombre: formData.nombre,
-        direccion: address,
+        direccion: ubicacion.address,
         telefono: formData.telefono,
         categorias: formData.categorias,
         logo: logoUrl,
-        latitude: position.lat,
-        longitude: position.lng,
+        latitude: ubicacion.position.lat,
+        longitude: ubicacion.position.lng,
         horario_apertura: formData.horario_apertura,
         horario_cierre: formData.horario_cierre,
         dis_max_envio_km: formData.dis_max_envio_km
@@ -237,7 +299,7 @@ const RegistroComercio = () => {
       navigate('/');
     } catch (error) {
       console.error('Error en el registro:', error);
-      alert('Error en el registro: ' + error.message);
+      alert('Error en el registro: ' + (error as Error).message);
     }
   };
 
@@ -260,9 +322,9 @@ const RegistroComercio = () => {
                 cursor: 'pointer'
               }}
             >
-              {logoPreview ? (
+              {logo.preview ? (
                 <img
-                  src={logoPreview}
+                  src={logo.preview}
                   alt="Logo preview"
                   style={{
                     maxWidth: '100%',
@@ -386,14 +448,14 @@ const RegistroComercio = () => {
           <label htmlFor="address-input" className="form-label">
             Dirección del Comercio
           </label>
-          {delayedRender && scriptLoaded ? (
+          {isMapReady ? (
             <PlacesAutocomplete
-              value={address}
-              onChange={setAddress}
+              value={ubicacion.address}
+              onChange={(address: string) => setUbicacion(prev => ({ ...prev, address }))}
               onSelect={handleSelect}
               debounce={300}
             >
-              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+              {({ getInputProps, suggestions, getSuggestionItemProps, loading }: PlacesAutocompleteRenderProps) => (
                 <div>
                   <input
                     {...getInputProps({
@@ -413,7 +475,7 @@ const RegistroComercio = () => {
                     overflowY: 'auto'
                   }}>
                     {loading && <div>Cargando...</div>}
-                    {suggestions.map((suggestion, index) => {
+                    {suggestions.map((suggestion: any, index: number) => {
                       const className = suggestion.active
                         ? 'suggestion-item--active'
                         : 'suggestion-item';
@@ -442,13 +504,13 @@ const RegistroComercio = () => {
           borderRadius: '4px',
           overflow: 'hidden'
         }}>
-          {delayedRender ? (
+          {isMapReady ? (
             <GoogleMapReact
               bootstrapURLKeys={{
                 key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
                 libraries: ['places']
               }}
-              center={position}
+              center={ubicacion.position}
               defaultZoom={17}
               onChange={handleMapChange}
               yesIWantToUseGoogleMapApiInternals
@@ -467,8 +529,8 @@ const RegistroComercio = () => {
               }}
             >
               <Marker 
-                lat={position.lat} 
-                lng={position.lng} 
+                lat={ubicacion.position.lat} 
+                lng={ubicacion.position.lng} 
                 text="📍"
                 style={{
                   position: 'absolute',

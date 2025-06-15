@@ -1,0 +1,118 @@
+.sidebar {
+  background-color: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+  height: 100vh;
+  padding: 1rem;
+  position: fixed;
+  width: 250px;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.sidebar h5 {
+  color: #343a40;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  width: 100%;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  text-align: left;
+  width: 100%;
+  background: none;
+  border: none;
+}
+
+.nav-link:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.nav-link.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.nav-link.active:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para el botón de comprar como cliente */
+.nav-item:last-child .nav-link {
+  margin-top: 1rem;
+  border-top: 1px solid #dee2e6;
+  padding-top: 1rem;
+}
+
+/* Estilos para el contenedor de la lista */
+.nav.flex-column {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Estilos para el hover de los botones */
+.btn-link:hover {
+  text-decoration: none;
+  background-color: #e9ecef;
+}
+
+/* Estilos para el botón activo */
+.btn-link.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Estilos para el botón activo al hacer hover */
+.btn-link.active:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Estilos para el contenedor principal */
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+/* Estilos para el borde derecho */
+.border-right {
+  border-right: 1px solid #dee2e6 !important;
+}
+
+/* Estilos para el padding */
+.p-15 {
+  padding: 15px;
+}
+
+/* Estilos para la altura completa */
+.h-100vh {
+  height: 100vh;
+}
+
+/* Estilos para el cursor pointer */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Estilos para quitar la decoración del texto */
+.text-decoration-none {
+  text-decoration: none;
+} 

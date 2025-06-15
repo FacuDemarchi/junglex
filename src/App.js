@@ -1,99 +1,41 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import ComercioView from './components/comercio/ComercioView';
-import ClientView from './components/client/ClientView';
-import Index from './components/noLogedIn/Index';
-import TestComponent from './components/testingFuncitions/TestComponent';
-import RegistroComercio from './components/comercio/RegistroComercio';
+import supabase from './supabase/supabase.config';
+import RegistroComercio from './components/common/RegistroComercio';
+import NoLogedIn from './pages/NoLogedIn';
+import Client from './pages/Client';
+import Comercio from './pages/Comercio';
+import './App.css';
 
-// Componente para la vista temporal de cliente
-const ClienteTemp = () => {
+function App() {
     const { user } = useAuth();
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [carritoVisible, setCarritoVisible] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-    const handleSelectLocation = (location) => {
-        setSelectedLocation(location);
-    };
-
-    // Si el usuario no está definido o no es un comercio, redirigimos a la ruta principal
     useEffect(() => {
-        if (!user || user.user_data?.user_type !== 'comercio') {
-            window.location.href = '/';
-        }
-    }, [user]);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setLoading(false);
+        });
 
-    if (!user) return null;
-
-    // Crear una copia del usuario con tipo cliente para renderizar la vista de cliente
-    const clientUser = {
-        ...user,
-        user_data: {
-            ...user.user_data,
-            user_type: 'cliente'
-        }
-    };
-
-    return (
-        <ClientView 
-            user={clientUser} 
-            selectedLocation={selectedLocation} 
-            handleSelectLocation={handleSelectLocation}
-            isTemporaryView={true}
-            carritoVisible={carritoVisible}
-            setCarritoVisible={setCarritoVisible}
-        />
-    );
-};
-
-const App = () => {
-    const { user } = useAuth();
-    console.log('user_id: ', user);
-    const [comercioView, setComercioView] = useState('MisPedidos');
-    const [selectedLocation, setSelectedLocation] = useState(null);
-
-    const handleSelectLocation = useCallback((location) => {
-        setSelectedLocation(location);
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
-    const handleComercioView = (view) => {
-        setComercioView(view)
-    };
-
-    const userType = user?.user_data ? user.user_data.user_type : null;
+    if (loading) {
+        return <div>Cargando...</div>;
+    }
 
     return (
         <Router>
             <Routes>
-                <Route path="/" element={
-                    user ? (
-                        userType === 'cliente' ? (
-                            <ClientView 
-                                user={user} 
-                                selectedLocation={selectedLocation} 
-                                handleSelectLocation={handleSelectLocation}
-                            />
-                        ) : userType === 'comercio' ? (
-                            <ComercioView 
-                                user={user} 
-                                currentView={comercioView} 
-                                handleComercioView={handleComercioView} 
-                            />
-                        ) : (
-                            <Index/>
-                        )
-                    ) : (
-                        <Index/>
-                    )
-                } />
-                {/* Nueva ruta para vista de cliente temporal */}
-                <Route path="/vista-cliente" element={<ClienteTemp />} />
-                <Route path="/test" element={<TestComponent />} />
-                <Route path="/registro-comercio" element={<RegistroComercio />} />
+                <Route path="/" element={user ? <Navigate to="/client" /> : <NoLogedIn />} />
+                <Route path="/client/*" element={user ? <Client currentView="pedidos" /> : <Navigate to="/" />} />
+                <Route path="/comercio/*" element={user ? <Comercio currentView="pedidos" /> : <Navigate to="/" />} />
+                <Route path="/registro-comercio" element={user ? <RegistroComercio /> : <Navigate to="/" />} />
             </Routes>
         </Router>
     );
-};
+}
 
 export default App;
