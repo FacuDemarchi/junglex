@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import ComercioView from './components/comercio/ComercioView';
-import ClientView from './components/client/ClientView';
-import Index from './components/noLogedIn/Index';
+import ComercioView from './pages/Comercio';
+import ClientView from './pages/Client';
+import NoLogedInView from './pages/NoLogedIn';
 import TestComponent from './components/testingFuncitions/TestComponent';
 import RegistroComercio from './components/comercio/RegistroComercio';
 
@@ -81,10 +81,10 @@ const App = () => {
                                 handleComercioView={handleComercioView} 
                             />
                         ) : (
-                            <Index/>
+                            <NoLogedInView/>
                         )
                     ) : (
-                        <Index/>
+                        <NoLogedInView/>
                     )
                 } />
                 {/* Nueva ruta para vista de cliente temporal */}

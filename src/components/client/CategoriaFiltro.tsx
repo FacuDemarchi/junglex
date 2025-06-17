@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles/CategoriaFiltro.module.css';
 
-interface Tag {
-    nombre: string;
-}
-
 interface CategoriaConTags {
     categoria: string;
     tags: string[];
@@ -19,14 +15,12 @@ interface CategoriaFiltroProps {
     categoriasConTags: CategoriaConTags[];
     filtroSeleccionado: FiltroSeleccionado | null;
     onFilterSelect: (filtro: string, tipo: 'categoría' | 'tag') => void;
-    onClearFilters?: () => void;
 }
 
 const CategoriaFiltro: React.FC<CategoriaFiltroProps> = ({
     categoriasConTags,
     filtroSeleccionado,
-    onFilterSelect,
-    onClearFilters
+    onFilterSelect
 }) => {
     const [categoriaExpandida, setCategoriaExpandida] = useState<string | null>(null);
 
@@ -61,14 +55,6 @@ const CategoriaFiltro: React.FC<CategoriaFiltroProps> = ({
         <div className={styles.categoriaFiltroContainer}>
             <div className={styles.categoriaFiltroHeader}>
                 {/* <h3 className={styles.categoriaFiltroTitle}>Categorías</h3> */}
-                {filtroSeleccionado && onClearFilters && (
-                    <button 
-                        className={styles.clearFiltersButton}
-                        onClick={onClearFilters}
-                    >
-                        Limpiar filtros
-                    </button>
-                )}
             </div>
             <ul className={styles.categoriaFiltroList}>
                 {categoriasConTags.map(({ categoria, tags }) => (

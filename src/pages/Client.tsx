@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Acordion from './Acordion';
-import Carrito from './Carrito';
-import CategoriaFiltro from './CategoriaFiltro';
-import Header from '../common/Header';
-import supabase from '../../supabase/supabase.config';
-import UserLocationForm from '../common/UserLocationForm';
-import styles from './styles/ClientView.module.css';
+import Acordion from '../components/client/Acordion';
+import Carrito from '../components/client/Carrito';
+import CategoriaFiltro from '../components/client/CategoriaFiltro';
+import Header from '../components/common/Header';
+import supabase from '../supabase/supabase.config';
+import UserLocationForm from '../components/common/UserLocationForm';
+import styles from './styles/Client.module.css';
 
 interface UserLocation {
     id: string;
@@ -202,11 +202,6 @@ const ClientView: React.FC<ClientViewProps> = ({
             return true;
         });
         setFilteredComercios(filtered);
-    };
-
-    const handleClearFilters = () => {
-        setFiltroSeleccionado(null);
-        setFilteredComercios([]);
     };
 
     const comerciosFiltrados = filteredComercios.length ? filteredComercios : comercios;

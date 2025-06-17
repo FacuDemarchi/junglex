@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useAuth } from "../../context/AuthContext";
-import supabase from '../../supabase/supabase.config';
-import styles from './Index.module.css';
+import { useAuth } from "../context/AuthContext";
+import supabase from '../supabase/supabase.config';
+import styles from './styles/NoLogedIn.module.css';
 
 interface UserData {
   user_id: string;
