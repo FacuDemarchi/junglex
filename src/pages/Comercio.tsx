@@ -5,6 +5,7 @@ import MisPedidos from '../components/comercio/MisPedidos';
 import HistorialPedidos from '../components/comercio/HistorialPedidos';
 import ConfigComercio from '../components/comercio/ConfigComercio';
 import ConfigComercioModal from '../components/comercio/ConfigComercioModal';
+import Posicion from '../components/comercio/Posicion';
 import supabase from '../supabase/supabase.config';
 import styles from './styles/Comercio.module.css';
 
@@ -43,6 +44,8 @@ const ComercioView: React.FC<ComercioViewProps> = ({ user, currentView, handleCo
                 return <HistorialPedidos user={user} />;
             case 'Config':
                 return <ConfigComercio user={user} />;
+            case 'PosicionarComercio':
+                return <Posicion />;
             default:
                 return <MisPedidos user={user} />;
         }
