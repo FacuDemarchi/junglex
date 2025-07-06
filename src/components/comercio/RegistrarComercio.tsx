@@ -1,29 +1,53 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ChangeEvent, DragEvent, FormEvent } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import GoogleMapReact from 'google-map-react';
 import supabase from '../../supabase/supabase.config';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import { useScript } from '../../hooks/useScript';
 
-const Marker = ({ text }) => <div>{text}</div>;
+interface User {
+  id: string;
+  user_data?: {
+    user_type: string;
+  };
+}
 
-const ConfigComercioModal = ({ show, onHide, user }) => {
+interface RegistrarComercioProps {
+  show: boolean;
+  onHide: () => void;
+  user: User;
+}
+
+interface Categoria {
+  id: string;
+  nombre: string;
+}
+
+interface Position {
+  lat: number;
+  lng: number;
+}
+
+// Marker debe aceptar lat y lng para GoogleMapReact
+const Marker: React.FC<{ lat?: number; lng?: number; text: string }> = ({ text }) => <div>{text}</div>;
+
+const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, user }) => {
   // Estados para la imagen
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
-  const fileInputRef = useRef(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Estados para la dirección y posición
-  const [position, setPosition] = useState({ lat: -31.42472, lng: -64.18855 });
-  const [address, setAddress] = useState('');
+  const [position, setPosition] = useState<Position>({ lat: -31.42472, lng: -64.18855 });
+  const [address, setAddress] = useState<string>('');
 
   // Estado para las categorías
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Categoria[]>([]);
 
   // Estado para saber si la librería de Google Maps se cargó
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState<boolean>(false);
 
-  const [delayedRender, setDelayedRender] = useState(false);
+  const [delayedRender, setDelayedRender] = useState<boolean>(false);
 
   const status = useScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places');
 
@@ -40,7 +64,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
       if (error) {
         console.error('Error fetching categories:', error);
       } else {
-        setCategories(data);
+        setCategories(data || []);
       }
     }
     fetchCategories();
@@ -60,7 +84,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
   }, [show]);
 
   // Función que se ejecuta cuando se selecciona una dirección en el autocomplete
-  const handleSelect = (selectedAddress) => {
+  const handleSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
     geocodeByAddress(selectedAddress)
       .then((results) => getLatLng(results[0]))
@@ -71,24 +95,24 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
   };
 
   // Actualizar la posición cuando se mueve el mapa
-  const handleMapChange = ({ center }) => {
+  const handleMapChange = ({ center }: { center: Position }) => {
     setPosition({ lat: center.lat, lng: center.lng });
   };
 
   // Manejo del archivo de imagen
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       processFile(file);
     }
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     const file = e.dataTransfer.files[0];
@@ -97,7 +121,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
     }
   };
 
-  const processFile = (file) => {
+  const processFile = (file: File) => {
     if (file.type.startsWith('image/')) {
       if (file.size > 5 * 1024 * 1024) {
         alert('El archivo es demasiado grande. Máximo 5MB.');
@@ -107,7 +131,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
       reader.onloadend = () => {
         // Se puede comprimir la imagen (opcional)
         compressImage(file, (compressedFile) => {
-          setLogoPreview(reader.result);
+          setLogoPreview(reader.result as string);
           setLogoFile(compressedFile || file);
         });
       };
@@ -117,12 +141,12 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
     }
   };
 
-  const compressImage = (file, callback) => {
+  const compressImage = (file: File, callback: (compressedFile: File | null) => void) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
+      const img = new window.Image();
+      img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 800;
@@ -145,30 +169,37 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
 
-        canvas.toBlob(
-          (blob) => {
-            const compressedFile = new File([blob], file.name, {
-              type: file.type,
-              lastModified: Date.now(),
-            });
-            callback(compressedFile);
-          },
-          file.type,
-          0.7
-        );
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: file.type,
+                  lastModified: Date.now(),
+                });
+                callback(compressedFile);
+              } else {
+                callback(null);
+              }
+            },
+            file.type,
+            0.7
+          );
+        } else {
+          callback(null);
+        }
       };
     };
   };
 
   const triggerFileInput = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   // Manejo del submit del formulario
-  // Manejo del submit del formulario
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       // Validación de dirección
@@ -177,7 +208,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
         return;
       }
 
-      let logoUrl = null;
+      let logoUrl: string | null = null;
       if (logoFile) {
         // Se obtiene la extensión del archivo
         const fileExt = logoFile.name.split('.').pop();
@@ -205,17 +236,18 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
       }
 
       // Preparar los datos a insertar en la tabla "comercios"
+      const form = e.target as HTMLFormElement;
       const comercioData = {
         id: user.id, // Se asigna el id igual al user.id
-        nombre: e.target.nombre.value,
+        nombre: (form.nombre as HTMLInputElement).value,
         direccion: address,
-        telefono: e.target.telefono.value,
-        categorias: e.target.categoria.value,
+        telefono: (form.telefono as HTMLInputElement).value,
+        categorias: (form.categoria as HTMLSelectElement).value,
         logo: logoUrl,
         latitude: position.lat,
         longitude: position.lng,
-        horario_apertura: e.target.hora_apertura.value,
-        horario_cierre: e.target.hora_cierre.value
+        horario_apertura: (form.hora_apertura as HTMLInputElement).value,
+        horario_cierre: (form.hora_cierre as HTMLInputElement).value
       };
 
       // Insertar la configuración inicial del comercio
@@ -388,7 +420,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
                           ? { backgroundColor: '#fafafa', cursor: 'pointer', padding: '5px' }
                           : { backgroundColor: '#ffffff', cursor: 'pointer', padding: '5px' };
                         return (
-                          <div key={index} {...getSuggestionItemProps(suggestion, { className, style })}>
+                          <div {...getSuggestionItemProps(suggestion, { className, style })}>
                             <span>{suggestion.description}</span>
                           </div>
                         );
@@ -406,7 +438,7 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
             {delayedRender ? (
               <GoogleMapReact
                 bootstrapURLKeys={{
-                  key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+                  key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
                   libraries: ['places']
                 }}
                 center={position}
@@ -428,4 +460,4 @@ const ConfigComercioModal = ({ show, onHide, user }) => {
   );
 };
 
-export default ConfigComercioModal;
+export default RegistrarComercio;

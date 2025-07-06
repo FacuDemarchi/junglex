@@ -5,7 +5,7 @@ import ComercioView from './pages/Comercio';
 import ClientView from './pages/Client';
 import NoLogedInView from './pages/NoLogedIn';
 import TestComponent from './components/testingFuncitions/TestComponent';
-import RegistroComercio from './components/comercio/RegistroComercio';
+import RegistrarComercio from './components/comercio/RegistrarComercio';
 
 // Componente para la vista temporal de cliente
 const ClienteTemp = () => {
@@ -90,7 +90,7 @@ const App = () => {
                 {/* Nueva ruta para vista de cliente temporal */}
                 <Route path="/vista-cliente" element={<ClienteTemp />} />
                 <Route path="/test" element={<TestComponent />} />
-                <Route path="/registro-comercio" element={<RegistroComercio />} />
+                <Route path="/registro-comercio" element={<RegistrarComercio />} />
             </Routes>
         </Router>
     );

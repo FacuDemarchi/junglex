@@ -4,7 +4,7 @@ import Header from '../components/common/Header';
 import MisPedidos from '../components/comercio/MisPedidos';
 import HistorialPedidos from '../components/comercio/HistorialPedidos';
 import ConfigComercio from '../components/comercio/ConfigComercio';
-import ConfigComercioModal from '../components/comercio/ConfigComercioModal';
+import ConfigComercioModal from '../components/comercio/RegistrarComercio';
 import Posicion from '../components/comercio/Posicion';
 import supabase from '../supabase/supabase.config';
 import styles from './styles/Comercio.module.css';
