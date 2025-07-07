@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { GoogleMapsProvider } from './context/GoogleMapsContext';
 import ComercioView from './pages/Comercio';
 import ClientView from './pages/Client';
 import NoLogedInView from './pages/NoLogedIn';
@@ -64,35 +65,37 @@ const App = () => {
     const userType = user?.user_data ? user.user_data.user_type : null;
 
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={
-                    user ? (
-                        userType === 'cliente' ? (
-                            <ClientView 
-                                user={user} 
-                                selectedLocation={selectedLocation} 
-                                handleSelectLocation={handleSelectLocation}
-                            />
-                        ) : userType === 'comercio' ? (
-                            <ComercioView 
-                                user={user} 
-                                currentView={comercioView} 
-                                handleComercioView={handleComercioView} 
-                            />
+        <GoogleMapsProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={
+                        user ? (
+                            userType === 'cliente' ? (
+                                <ClientView 
+                                    user={user} 
+                                    selectedLocation={selectedLocation} 
+                                    handleSelectLocation={handleSelectLocation}
+                                />
+                            ) : userType === 'comercio' ? (
+                                <ComercioView 
+                                    user={user} 
+                                    currentView={comercioView} 
+                                    handleComercioView={handleComercioView} 
+                                />
+                            ) : (
+                                <NoLogedInView/>
+                            )
                         ) : (
                             <NoLogedInView/>
                         )
-                    ) : (
-                        <NoLogedInView/>
-                    )
-                } />
-                {/* Nueva ruta para vista de cliente temporal */}
-                <Route path="/vista-cliente" element={<ClienteTemp />} />
-                <Route path="/test" element={<TestComponent />} />
-                <Route path="/registro-comercio" element={<RegistrarComercio />} />
-            </Routes>
-        </Router>
+                    } />
+                    {/* Nueva ruta para vista de cliente temporal */}
+                    <Route path="/vista-cliente" element={<ClienteTemp />} />
+                    <Route path="/test" element={<TestComponent />} />
+                    <Route path="/registro-comercio" element={<RegistrarComercio />} />
+                </Routes>
+            </Router>
+        </GoogleMapsProvider>
     );
 };
 

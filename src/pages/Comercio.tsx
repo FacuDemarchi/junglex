@@ -7,7 +7,7 @@ import ConfigComercio from '../components/comercio/ConfigComercio';
 import ConfigComercioModal from '../components/comercio/RegistrarComercio';
 import Posicion from '../components/comercio/Posicion';
 import supabase from '../supabase/supabase.config';
-import styles from './styles/Comercio.module.css';
+// import styles from './styles/Comercio.module.css';
 
 interface UserLocation {
     id: string;
@@ -76,19 +76,19 @@ const ComercioView: React.FC<ComercioViewProps> = ({ user, currentView, handleCo
     }, [user]);
 
     return (
-        <div className={styles.container}>
+        <div className="min-h-screen bg-gray-100 p-2">
             <Header 
                 user={user} 
                 selectedLocation={selectedLocation}
                 handleSelectLocation={handleSelectLocation}
                 handleComercioView={handleComercioView} 
             />
-            <div className={styles.row}>
-                <div className={styles['col-md-2']}>
+            <div className="flex gap-5 mt-5">
+                <div className="flex-none w-52 bg-gray-50 rounded-lg p-4 shadow-md">
                     <Sidebar currentView={currentView} handleComercioView={handleComercioView} />
                 </div>
-                <div className={styles['col-md-10']}>
-                    <div className={styles.content}>
+                <div className="flex-1 bg-white rounded-lg shadow-md">
+                    <div className="min-h-[400px]">
                         {renderView()}
                     </div>
                 </div>

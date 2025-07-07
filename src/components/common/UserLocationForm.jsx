@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import GoogleMapReact from 'google-map-react';
+import GoogleMapWrapper from './GoogleMapWrapper';
 import './UserLocationForm.css';
 import supabase from '../../supabase/supabase.config';
+import { useGoogleMaps } from '../../context/GoogleMapsContext';
 
 const Marker = ({ text }) => <div>{text}</div>;
 
@@ -12,6 +13,7 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     const [isSaving, setIsSaving] = useState(false);
     const autoCompleteRef = useRef(null);
     const inputRef = useRef(null);
+    const { isLoaded: googleReady } = useGoogleMaps();
 
     const handleMapChange = useCallback(({ center }) => {
         setPosition({
@@ -35,16 +37,11 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     }, [handleMapChange]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (window.google && window.google.maps && window.google.maps.places) {
-                clearInterval(interval); 
-                autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current);
-                autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
-            }
-        }, 500);
-    
-        return () => clearInterval(interval);
-    }, [handlePlaceChanged]);
+        if (googleReady && window.google?.maps?.places && inputRef.current) {
+            autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current);
+            autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
+        }
+    }, [googleReady, handlePlaceChanged]);
 
     const handleSavePosition = async () => {
         if (isSaving) return;
@@ -137,14 +134,13 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
                 />
 
                 <div className="map-container">
-                    <GoogleMapReact
-                        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, libraries: ['places'] }}
-                        center={position}
-                        defaultZoom={17}
-                        onChange={handleMapChange}
-                    >
-                        <Marker lat={position.lat} lng={position.lng} text="📍" />
-                    </GoogleMapReact>
+                                    <GoogleMapWrapper
+                    center={position}
+                    defaultZoom={17}
+                    onChange={handleMapChange}
+                >
+                    <Marker lat={position.lat} lng={position.lng} text="📍" />
+                </GoogleMapWrapper>
                 </div>
 
                 <div className="button-group">

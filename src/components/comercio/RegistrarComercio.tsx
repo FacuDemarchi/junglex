@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, ChangeEvent, DragEvent, FormEvent } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import GoogleMapReact from 'google-map-react';
+import GoogleMapWrapper from '../common/GoogleMapWrapper';
 import supabase from '../../supabase/supabase.config';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import { useScript } from '../../hooks/useScript';
+import { useGoogleMaps } from '../../context/GoogleMapsContext';
 
 interface User {
   id: string;
@@ -49,13 +49,13 @@ const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, use
 
   const [delayedRender, setDelayedRender] = useState<boolean>(false);
 
-  const status = useScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places');
+  const { isLoaded: googleReady } = useGoogleMaps();
 
   useEffect(() => {
-    if (status === 'ready') {
+    if (googleReady) {
       setScriptLoaded(true);
     }
-  }, [status]);
+  }, [googleReady]);
 
   // Cargar las categorías desde Supabase
   useEffect(() => {
@@ -436,17 +436,13 @@ const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, use
           {/* Mapa para ubicar la dirección */}
           <div className="mb-3" style={{ height: '400px', width: '100%' }}>
             {delayedRender ? (
-              <GoogleMapReact
-                bootstrapURLKeys={{
-                  key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
-                  libraries: ['places']
-                }}
+              <GoogleMapWrapper
                 center={position}
                 defaultZoom={17}
                 onChange={handleMapChange}
               >
                 <Marker lat={position.lat} lng={position.lng} text="📍" />
-              </GoogleMapReact>
+              </GoogleMapWrapper>
             ) : (
               <div>Cargando mapa...</div>
             )}
