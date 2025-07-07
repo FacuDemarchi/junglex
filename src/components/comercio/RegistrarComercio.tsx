@@ -87,11 +87,11 @@ const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, use
   const handleSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
     geocodeByAddress(selectedAddress)
-      .then((results) => getLatLng(results[0]))
-      .then((latLng) => {
+      .then((results: any[]) => getLatLng(results[0]))
+      .then((latLng: any) => {
         setPosition(latLng);
       })
-      .catch((error) => console.error('Error en geocodeByAddress:', error));
+      .catch((error: any) => console.error('Error en geocodeByAddress:', error));
   };
 
   // Actualizar la posición cuando se mueve el mapa
@@ -401,7 +401,7 @@ const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, use
                 onSelect={handleSelect}
                 debounce={300}
               >
-                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }: any) => (
                   <div>
                     <input
                       {...getInputProps({
@@ -412,7 +412,7 @@ const RegistrarComercio: React.FC<RegistrarComercioProps> = ({ show, onHide, use
                     />
                     <div>
                       {loading && <div>Cargando...</div>}
-                      {suggestions.map((suggestion, index) => {
+                      {suggestions.map((suggestion: any, index: any) => {
                         const className = suggestion.active
                           ? 'suggestion-item--active'
                           : 'suggestion-item';
