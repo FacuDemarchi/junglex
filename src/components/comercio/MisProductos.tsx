@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { Table } from 'react-bootstrap';
 import supabase from '../../supabase/supabase.config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faToggleOn, faToggleOff, faImage } from '@fortawesome/free-solid-svg-icons';
-import './styles/checkbox.css';
 
 interface User {
   id: string;
@@ -26,13 +24,6 @@ interface Producto {
   disponible: boolean;
   img?: string;
   tags?: Tag[];
-}
-
-interface TagProducto {
-  tag: {
-    id: string;
-    nombre: string;
-  };
 }
 
 interface MisProductosProps {
@@ -314,12 +305,6 @@ const MisProductos: React.FC<MisProductosProps> = ({ user }) => {
         </thead>
         <tbody>
           {productos.map((producto) => {
-            // Para tooltip de tags extra
-            const maxTags = 3;
-            const tagsToShow = (producto.tags || []).slice(0, maxTags);
-            const extraTags = (producto.tags || []).slice(maxTags);
-            const extraCount = extraTags.length;
-            const extraNames = extraTags.map(t => t.nombre).join(', ');
             return (
               <tr key={producto.id} className="border-b border-gray-100 hover:bg-blue-50 transition-all">
                 <td className="text-center align-middle pr-2 w-8">

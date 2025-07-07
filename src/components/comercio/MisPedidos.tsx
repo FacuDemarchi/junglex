@@ -3,7 +3,7 @@ import Recibidos from './pedidos/Recibidos';
 import Aceptado from './pedidos/Aceptado';
 import Listo from './pedidos/Listo';
 import supabase from '../../supabase/supabase.config';
-import styles from './styles/MisPedidos.module.css';
+// import styles from './styles/MisPedidos.module.css'; // Eliminado
 
 interface PedidoProducto {
   id: string;
@@ -24,7 +24,7 @@ interface Pedido {
   id: string;
   estado: string;
   pedido_productos: PedidoProducto[];
-  user_id: string;
+  user_id: string | { user_data?: { phone: string } | null };
   user_locations: UserLocation;
   // otros campos relevantes...
 }
@@ -57,9 +57,10 @@ const MisPedidos: React.FC<MisPedidosProps> = ({ user }) => {
           *,
           pedido_productos(
             *,
-            producto_id(nombre)
+            producto_id(*)
           ),
-          user_locations(*)
+          user_locations(*),
+          user_data(phone)
         `)
         .eq('comercio_id', user.id)
         .in('estado', ['pendiente', 'aceptado', 'listo']);
@@ -106,9 +107,10 @@ const MisPedidos: React.FC<MisPedidosProps> = ({ user }) => {
                   *,
                   pedido_productos(
                     *,
-                    producto_id(nombre)
+                    producto_id(*)
                   ),
-                  user_locations(*)
+                  user_locations(*),
+                  user_id(user_data(phone))
                 `)
                 .eq('id', payload.new.id)
                 .single();
@@ -239,9 +241,9 @@ const MisPedidos: React.FC<MisPedidosProps> = ({ user }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.columna}>
-        <h3 className={styles.titulo}>Pedidos Pendientes</h3>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+      <div className="bg-transparent p-0">
+        <h3 className="text-lg font-bold text-blue-600 mb-2">Pedidos Pendientes</h3>
         {pedidosPendientes.length === 0 ? (
           <p>No hay pedidos pendientes.</p>
         ) : (
@@ -255,8 +257,8 @@ const MisPedidos: React.FC<MisPedidosProps> = ({ user }) => {
           ))
         )}
       </div>
-      <div className={styles.columna}>
-        <h3 className={styles.titulo}>Pedidos Aceptados</h3>
+      <div className="bg-transparent p-0">
+        <h3 className="text-lg font-bold text-blue-600 mb-2">Pedidos Aceptados</h3>
         {pedidosAceptados.length === 0 ? (
           <p>No hay pedidos aceptados.</p>
         ) : (
@@ -270,8 +272,8 @@ const MisPedidos: React.FC<MisPedidosProps> = ({ user }) => {
           ))
         )}
       </div>
-      <div className={styles.columna}>
-        <h3 className={styles.titulo}>Pedidos Listos</h3>
+      <div className="bg-transparent p-0">
+        <h3 className="text-lg font-bold text-blue-600 mb-2">Pedidos Listos</h3>
         {pedidosListos.length === 0 ? (
           <p>No hay pedidos listos.</p>
         ) : (

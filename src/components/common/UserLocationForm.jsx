@@ -37,17 +37,27 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     }, [handleMapChange]);
 
     useEffect(() => {
-        if (googleReady && window.google?.maps?.places && inputRef.current) {
+        let listener;
+        if (
+            googleReady &&
+            window.google?.maps?.places &&
+            inputRef.current
+        ) {
             autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current);
-            autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
+            listener = autoCompleteRef.current.addListener('place_changed', handlePlaceChanged);
         }
+        return () => {
+            if (listener) {
+                window.google.maps.event.removeListener(listener);
+            }
+        };
     }, [googleReady, handlePlaceChanged]);
 
     const handleSavePosition = async () => {
         if (isSaving) return;
         
-        if (!address) {
-            alert('Por favor ingrese una dirección de envío');
+        if (!address || position.lat == null || position.lng == null) {
+            alert('Por favor ingrese una dirección válida y seleccione una ubicación en el mapa.');
             return;
         }
 
@@ -84,18 +94,16 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
 
             if (locationError) throw locationError;
 
-            if (phone) {
-                const { error: phoneError } = await supabase
-                    .from('user_data')
-                    .upsert([
-                        {
-                            user_id: user.id,
-                            phone: phone,
-                        },
-                    ]);
-
-                if (phoneError) throw phoneError;
-            }
+            // Guardar o actualizar el teléfono siempre
+            const { error: phoneError } = await supabase
+                .from('user_data')
+                .upsert([
+                    {
+                        user_id: user.id,
+                        phone: phone ?? user?.user_data?.phone ?? '',
+                    },
+                ]);
+            if (phoneError) throw phoneError;
 
             alert(`Ubicación guardada: Dirección: ${address}, Latitud: ${position.lat}, Longitud: ${position.lng}`);
             handleSave(address, position);
@@ -115,16 +123,14 @@ const UserLocationForm = ({ show, handleClose, handleSave, user }) => {
     return (
         <div className="floating-form-container">
             <div className="floating-form">
-                {user?.user_data && !user.user_data.phone && (
-                    <input
-                        type="text"
-                        id="phone-input"
-                        placeholder="Ingresa un número de teléfono"
-                        className="input-address"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                    />
-                )}
+                <input
+                    type="text"
+                    id="phone-input"
+                    placeholder="Ingresa un número de teléfono"
+                    className="input-address"
+                    value={phone ?? user?.user_data?.phone ?? ''}
+                    onChange={(e) => setPhone(e.target.value)}
+                />
                 <input
                     type="text"
                     id="address-input"
